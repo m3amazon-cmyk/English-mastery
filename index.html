@@ -29,7 +29,6 @@ html,body{height:100%;background:var(--bg);font-family:'Plus Jakarta Sans',sans-
 .home-badges{display:flex;gap:8px;}
 .pill{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:var(--r-full);font-size:13px;font-weight:600;}
 .pill-xp{background:var(--yellow-light);color:#92400E;}
-.pill-streak{background:var(--primary-light);color:var(--primary-dark);}
 .home-scroll{flex:1;overflow-y:auto;padding:16px;-webkit-overflow-scrolling:touch;}
 .home-scroll::-webkit-scrollbar{display:none;}
 .welcome{background:var(--primary);border-radius:var(--r);padding:20px;margin-bottom:20px;color:white;position:relative;overflow:hidden;}
@@ -195,7 +194,6 @@ html,body{height:100%;background:var(--bg);font-family:'Plus Jakarta Sans',sans-
     <div class="home-logo">English<span>.</span></div>
     <div class="home-badges">
       <div class="pill pill-xp">⚡ <span id="h-xp">0</span> XP</div>
-      <div class="pill pill-streak">🔥 <span id="h-str">1</span></div>
       <button class="theme-btn" onclick="toggleTheme()">🌙</button>
     </div>
   </div>
@@ -222,7 +220,7 @@ html,body{height:100%;background:var(--bg);font-family:'Plus Jakarta Sans',sans-
 
 <script>
 const SK="em_full_v1";
-function loadST(){try{const r=localStorage.getItem(SK);if(r)return JSON.parse(r);}catch(e){}return{xp:0,streak:1,completed:[],actDone:{},retryCount:{}};}
+function loadST(){try{const r=localStorage.getItem(SK);if(r)return JSON.parse(r);}catch(e){}return{xp:0,completed:[],actDone:{},retryCount:{}};}
 function saveST(){try{localStorage.setItem(SK,JSON.stringify(ST));}catch(e){}}
 let ST=loadST();
 function addXP(n){ST.xp+=n;saveST();document.getElementById("h-xp").textContent=ST.xp;}
@@ -357,7 +355,6 @@ function retryAct(lid,act){resetDS(lid,act);rerender(lid,act);}
 
 function buildHome(){
   document.getElementById("h-xp").textContent=ST.xp;
-  document.getElementById("h-str").textContent=ST.streak;
   const total=PHASES.flatMap(p=>p.lessons).length;
   const pct=Math.round((ST.completed.length/total)*100);
   document.getElementById("home-body").innerHTML=`
