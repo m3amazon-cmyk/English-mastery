@@ -85,6 +85,14 @@ html,body{height:100%;background:var(--bg);font-family:'Plus Jakarta Sans',sans-
 .exp-table th{background:var(--surface);padding:7px 10px;text-align:left;font-weight:700;font-size:11px;color:var(--muted);text-transform:uppercase;}
 .exp-table td{padding:7px 10px;border-top:1px solid var(--border);vertical-align:top;line-height:1.5;}
 .exp-table tr:nth-child(even) td{background:var(--surface);}
+.comp-pill{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:var(--r-full);margin-top:4px;}
+.comp-pill.done{background:var(--green-light);color:var(--green-dark);}
+.comp-pill.part{background:var(--primary-light);color:var(--primary-dark);}
+.comp-pill.none{background:var(--surface);color:var(--muted);}
+.sl-comp-row{display:flex;gap:5px;margin-top:5px;}
+.sl-act-pill{font-size:10px;font-weight:600;padding:2px 7px;border-radius:var(--r-full);}
+.sl-act-pill.done{background:var(--green-light);color:var(--green-dark);}
+.sl-act-pill.todo{background:var(--surface);color:var(--dim);}
 .home-logo{font-size:17px;font-weight:800;}
 .home-logo span{color:var(--primary);}
 .home-badges{display:flex;gap:8px;}
@@ -352,6 +360,9 @@ function addXP(n){ST.xp+=n;saveST();const el=document.getElementById("h-xp");if(
 function markActDone(lid,act,score,total){if(!ST.actDone[lid])ST.actDone[lid]={};ST.actDone[lid][act]=true;if(score!==undefined&&total!==undefined){if(!ST.mastery)ST.mastery={};if(!ST.mastery[lid])ST.mastery[lid]={};ST.mastery[lid][act]=Math.round((score/total)*100);}saveST();buildTabs(lid);checkComplete(lid);buildSidebar();}
 const MAIN_LESSONS=new Set(["pos","articles","tenses","agreement","phrases","clauses","sentencetypes","punctuation","mistakes","register","clarity","cohesion","explaining","erroranalysis","academic"]);
 function checkComplete(lid){if(!MAIN_LESSONS.has(lid))return;const acts=["mcq","fill","match","tap","err"];if(acts.every(a=>ST.actDone[lid]&&ST.actDone[lid][a])&&!ST.completed.includes(lid)){ST.completed.push(lid);ST.xp+=50;saveST();toast("🎉 Lesson complete! +50 XP");buildHome();}}
+function lessonCompletion(lid){const acts=["mcq","fill","match","tap","err"];const done=acts.filter(a=>ST.actDone[lid]&&ST.actDone[lid][a]).length;return{done,total:acts.length,pct:Math.round((done/acts.length)*100)};}
+function subCompletion(slid){const acts=["mcq","fill"];const done=acts.filter(a=>ST.actDone[slid]&&ST.actDone[slid][a]).length;return{done,total:acts.length,pct:Math.round((done/acts.length)*100)};}
+function actScore(lid,act){return ST.mastery&&ST.mastery[lid]&&ST.mastery[lid][act]!==undefined?ST.mastery[lid][act]:null;}
 function getRC(lid,act){if(!ST.retryCount[lid])ST.retryCount[lid]={};return ST.retryCount[lid][act]||0;}
 function incRC(lid,act){if(!ST.retryCount[lid])ST.retryCount[lid]={};ST.retryCount[lid][act]=(ST.retryCount[lid][act]||0)+1;saveST();}
 function shuffle(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;}
@@ -933,7 +944,7 @@ function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classL
 function goHome(){showScreen("scr-home");buildHome();}
 function openLesson(lid){const d=LD[lid];if(!d){toast("Coming soon! 🚧");return;}curL=lid;curA="overview";document.getElementById("lh-t").textContent=d.title;document.getElementById("lh-s").textContent=d.sub;showScreen("scr-lesson");buildTabs(lid);showAct(lid,"overview");buildSidebar();}
 const TABS=[{id:"overview",label:"📖 Overview"},{id:"flashcards",label:"🃏 Flashcards"},{id:"mcq",label:"❓ Quiz"},{id:"fill",label:"✏️ Fill Blank"},{id:"match",label:"🔗 Match"},{id:"tap",label:"👆 Tap Word"},{id:"err",label:"🔍 Error Fix"}];
-function buildTabs(lid){const row=document.getElementById("tabs-row");row.innerHTML="";TABS.forEach(t=>{const isDone=t.id!=="overview"&&t.id!=="flashcards"&&ST.actDone[lid]&&ST.actDone[lid][t.id];const btn=document.createElement("div");btn.className="tab"+(curA===t.id?" active":"")+(isDone?" done-tab":"");btn.textContent=isDone?t.label+" ✓":t.label;btn.onclick=()=>{curA=t.id;buildTabs(lid);showAct(lid,t.id);};row.appendChild(btn);});}
+function buildTabs(lid){const row=document.getElementById("tabs-row");row.innerHTML="";TABS.forEach(t=>{const isDone=t.id!=="overview"&&t.id!=="flashcards"&&ST.actDone[lid]&&ST.actDone[lid][t.id];const score=isDone?actScore(lid,t.id):null;const btn=document.createElement("div");btn.className="tab"+(curA===t.id?" active":"")+(isDone?" done-tab":"");btn.textContent=isDone?(score!==null?t.label+" "+score+"%":t.label+" ✓"):t.label;btn.onclick=()=>{curA=t.id;buildTabs(lid);showAct(lid,t.id);};row.appendChild(btn);});}
 function showAct(lid,act){const p=document.getElementById("panels");p.innerHTML="";document.getElementById("lesson-scroll").scrollTop=0;const d=LD[lid];if(act==="overview")p.innerHTML=renderOV(d,lid);else if(act==="flashcards")renderFC(lid,p);else if(act==="mcq")renderMCQ(lid,p);else if(act==="fill")renderFill(lid,p);else if(act==="match")renderMatch(lid,p);else if(act==="tap")renderTap(lid,p);else if(act==="err")renderErr(lid,p);}
 function rerender(lid,act){const p=document.getElementById("panels");if(!p)return;if(act==="flashcards")renderFC(lid,p);else if(act==="mcq")renderMCQ(lid,p);else if(act==="fill")renderFill(lid,p);else if(act==="match")renderMatch(lid,p);else if(act==="tap")renderTap(lid,p);else if(act==="err")renderErr(lid,p);}
 function switchAct(lid,act){curA=act;buildTabs(lid);showAct(lid,act);}
@@ -945,11 +956,20 @@ function renderOV(d,lid){
     h+=`<div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">📚 Sub-lessons — deep dives</div>`;
     h+=`<div class="sl-grid">`;
     d.sublessons.forEach(sl=>{
-      const done=ST.actDone[sl.id]&&ST.actDone[sl.id].mcq&&ST.actDone[sl.id].fill;
-      h+=`<div class="sl-card${done?" sl-done":""}" onclick="openSubLesson('${lid}','${sl.id}')">`;
+      const sc=subCompletion(sl.id);
+      const qDone=ST.actDone[sl.id]&&ST.actDone[sl.id].mcq;
+      const fDone=ST.actDone[sl.id]&&ST.actDone[sl.id].fill;
+      const qScore=actScore(sl.id,"mcq");
+      const fScore=actScore(sl.id,"fill");
+      h+=`<div class="sl-card${sc.pct===100?" sl-done":""}" onclick="openSubLesson('${lid}','${sl.id}')">`;
       h+=`<div class="sl-icon">${sl.icon}</div>`;
-      h+=`<div class="sl-info"><div class="sl-title">${sl.title}</div><div class="sl-desc">${sl.desc}</div></div>`;
-      h+=`<div class="sl-badge ${done?"done":"go"}">${done?"✓":"→"}</div>`;
+      h+=`<div class="sl-info"><div class="sl-title">${sl.title}</div><div class="sl-desc">${sl.desc}</div>`;
+      h+=`<div class="sl-comp-row">`;
+      h+=`<span class="sl-act-pill ${qDone?"done":"todo"}">Quiz${qDone&&qScore!==null?" "+qScore+"%":""}</span>`;
+      h+=`<span class="sl-act-pill ${fDone?"done":"todo"}">Fill${fDone&&fScore!==null?" "+fScore+"%":""}</span>`;
+      if(sc.pct>0)h+=`<span class="sl-act-pill ${sc.pct===100?"done":"part"}" style="${sc.pct<100?"background:var(--primary-light);color:var(--primary-dark)":""}">${sc.pct}%</span>`;
+      h+=`</div></div>`;
+      h+=`<div class="sl-badge ${sc.pct===100?"done":"go"}">${sc.pct===100?"✓":"→"}</div>`;
       h+=`</div>`;
     });
     h+=`</div><div style="height:4px"></div>`;
@@ -1013,9 +1033,10 @@ function buildSubTabs(lid,slid,activeAct){
   const row=document.getElementById("sub-tabs-row");row.innerHTML="";
   SUB_TABS.forEach(t=>{
     const isDone=t.id!=="overview"&&ST.actDone[slid]&&ST.actDone[slid][t.id];
+    const score=isDone?actScore(slid,t.id):null;
     const btn=document.createElement("div");
     btn.className="tab"+(activeAct===t.id?" active":"")+(isDone?" done-tab":"");
-    btn.textContent=isDone?t.label+" ✓":t.label;
+    btn.textContent=isDone?(score!==null?t.label+" "+score+"%":t.label+" ✓"):t.label;
     btn.onclick=()=>{buildSubTabs(lid,slid,t.id);showSubAct(lid,slid,t.id);};
     row.appendChild(btn);
   });
@@ -1029,7 +1050,18 @@ function showSubAct(lid,slid,act){
   else if(act==="fill")renderSubFill(lid,slid,p);
 }
 function renderSubOV(sl,lid,slid){
+  const sc=subCompletion(slid);
+  const qS=actScore(slid,"mcq"),fS=actScore(slid,"fill");
+  const qDone=ST.actDone[slid]&&ST.actDone[slid].mcq,fDone=ST.actDone[slid]&&ST.actDone[slid].fill;
+  let progBar=`<div style="display:flex;align-items:center;gap:10px;background:var(--surface);border-radius:var(--r-sm);padding:10px 14px;margin-bottom:14px;flex-wrap:wrap;gap:8px">`;
+  progBar+=`<div style="flex:1;min-width:0"><div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px">COMPLETION</div><div style="height:6px;background:var(--border);border-radius:99px;overflow:hidden"><div style="height:6px;width:${sc.pct}%;background:${sc.pct===100?"var(--green)":"var(--primary)"};border-radius:99px;transition:width .4s"></div></div></div>`;
+  progBar+=`<div style="display:flex;gap:6px;flex-shrink:0">`;
+  progBar+=`<span class="sl-act-pill ${qDone?"done":"todo"}">Quiz${qDone&&qS!==null?" "+qS+"%":""}</span>`;
+  progBar+=`<span class="sl-act-pill ${fDone?"done":"todo"}">Fill${fDone&&fS!==null?" "+fS+"%":""}</span>`;
+  progBar+=`<span style="font-size:11px;font-weight:700;color:${sc.pct===100?"var(--green-dark)":"var(--muted)"}">${sc.pct}%</span>`;
+  progBar+=`</div></div>`;
   let h=`<div class="card"><div class="intro-tag">${sl.intro.tag}</div><div class="intro-h">${sl.intro.h}</div><div class="intro-desc">${sl.intro.desc}</div></div>`;
+  h+=progBar;
   if(sl.rule)h+=`<div class="rule-box"><div class="rule-t">${sl.rule.t}</div><div class="rule-b">${sl.rule.b}</div></div>`;
   if(sl.points&&sl.points.length){
     h+=`<div class="exp-section"><div class="exp-h">Key Concepts</div>`;
@@ -1108,10 +1140,13 @@ function buildHome(){
       ${ph.lessons.map(l=>{
         const done=ST.completed.includes(l.id);
         const mast=lessonMastery(l.id);
+        const comp=lessonCompletion(l.id);
         const cls=`lesson-card${done?" done":l.unlocked?"":" locked"}`;
+        const pillCls=comp.pct===100?"done":comp.pct>0?"part":"none";
+        const pillLabel=done?"✓ Complete":comp.pct>0?`${comp.done}/${comp.total} activities · ${comp.pct}%`:"Not started";
         return `<div class="${cls}" ${(l.unlocked||done)?`onclick="openLesson('${l.id}')"`:""}>
           <div class="l-icon ${l.color}">${l.icon}</div>
-          <div class="l-info"><div class="l-num">Lesson ${l.num}</div><div class="l-title">${l.title}</div><div class="l-sub">${l.sub}</div>${mast>0?`<div class="mastery-bar"><div class="mastery-fill" style="width:${mast}%;background:${masteryColor(mast)}"></div></div>`:""}</div>
+          <div class="l-info"><div class="l-num">Lesson ${l.num}</div><div class="l-title">${l.title}</div><div class="l-sub">${l.sub}</div><div class="comp-pill ${pillCls}">${pillLabel}</div>${mast>0?`<div class="mastery-bar" style="margin-top:5px"><div class="mastery-fill" style="width:${mast}%;background:${masteryColor(mast)}"></div></div>`:""}</div>
           <div class="l-badge ${done?"done":l.unlocked?"go":"lock"}">${done?"✓":l.unlocked?"→":"🔒"}</div>
         </div>`;
       }).join("")}
@@ -1133,11 +1168,12 @@ function buildSidebar(){
     h+=`<div class="sb-phase">${ph.label}</div>`;
     ph.lessons.forEach(l=>{
       const done=ST.completed.includes(l.id),mast=lessonMastery(l.id),isAct=curL===l.id;
+      const comp=lessonCompletion(l.id);
       let cls="sb-lesson"+(isAct?" sb-active":"")+((!l.unlocked&&!done)?" sb-locked":"");
       h+=`<div class="${cls}" ${(l.unlocked||done)?`onclick="openLesson('${l.id}')"`:""}>`;
       h+=`<span class="sb-l-icon">${l.icon}</span><div class="sb-l-info"><div class="sb-l-name">${l.title}</div>`;
-      if(mast>0)h+=`<div class="sb-l-pct" style="color:${masteryColor(mast)}">${mast}% mastery</div>`;
-      else if(done)h+=`<div class="sb-l-pct" style="color:var(--green)">Completed</div>`;
+      if(done)h+=`<div class="sb-l-pct" style="color:var(--green)">✓ Complete · ${mast>0?mast+"% mastery":""}</div>`;
+      else if(comp.pct>0)h+=`<div class="sb-l-pct" style="color:var(--primary)">${comp.done}/${comp.total} done · ${mast>0?mast+"% mastery":""}</div>`;
       h+=`</div>${done?'<span class="sb-l-check">✓</span>':""}</div>`;
     });
   });
