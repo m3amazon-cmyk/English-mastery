@@ -102,6 +102,7 @@ const LEVELS=[
 - `MAIN_LESSONS` Set used to guard `checkComplete` — sub-lesson IDs are excluded
 - `ds(lid, act)` / `getQs(lid, act)` / `resetDS(lid, act)` work for both lessons and sub-lessons
 - `curL` = current lesson id; `curSL` = current sub-lesson id
+- `hl(text)` auto-highlights grammar terms + ALL-CAPS words (bold blue `.hl`) in questions, tasks, fill sentences, explanations, flashcards, and concept cards — applied at render time, so authored content stays plain text (no manual markup needed)
 - Navigation: `goHome()` / `openLesson(lid)` / `openSubLesson(lid, slid)` / `closeSubLesson()`
 
 ---
