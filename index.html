@@ -58,6 +58,21 @@ html,body{height:100%;background:var(--bg);font-family:'Plus Jakarta Sans',sans-
 .level-fill{height:5px;border-radius:99px;transition:width .4s;}
 .mastery-bar{height:3px;background:var(--surface);border-radius:99px;margin-top:6px;overflow:hidden;}
 .mastery-fill{height:3px;border-radius:99px;transition:width .4s;}
+.stat-row{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px;}
+@media(min-width:520px){.stat-row{grid-template-columns:repeat(4,1fr);}}
+.stat-card{background:var(--white);border-radius:var(--r);padding:12px 8px;box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;gap:3px;}
+.stat-ico{font-size:24px;height:46px;display:flex;align-items:center;justify-content:center;}
+.stat-val{font-size:18px;font-weight:800;line-height:1.1;}
+.stat-lbl{font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.03em;}
+.goal-ring{width:46px;height:46px;border-radius:50%;background:conic-gradient(var(--green) calc(var(--p,0)*1%),var(--surface) 0);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.goal-ring-inner{width:34px;height:34px;border-radius:50%;background:var(--white);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--green-dark);}
+.sb-stats{display:flex;gap:8px;padding:12px 16px 0;}
+.sb-stat{flex:1;background:var(--surface);border-radius:var(--r-sm);padding:7px 4px;text-align:center;font-size:10px;color:var(--muted);font-weight:600;display:flex;flex-direction:column;align-items:center;gap:1px;}
+.sb-stat b{font-size:16px;color:var(--text);font-weight:800;}
+.sb-goal-wrap{padding:10px 16px 2px;}
+.sb-goal-top{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);font-weight:600;margin-bottom:4px;}
+.sb-goal-track{height:5px;background:var(--surface);border-radius:99px;overflow:hidden;}
+.sb-goal-fill{height:5px;border-radius:99px;background:var(--green);transition:width .4s;}
 .lessons-grid{display:grid;gap:8px;margin-bottom:4px;}
 @media(min-width:769px){.lessons-grid{grid-template-columns:1fr 1fr;}}
 .err-sent-box{background:var(--red-light);border:2px solid var(--red);border-radius:var(--r-sm);padding:14px;margin-bottom:12px;font-size:13.5px;font-weight:500;line-height:1.7;color:var(--red-dark);}
@@ -272,6 +287,7 @@ html,body{height:100%;background:var(--bg);font-family:'Plus Jakarta Sans',sans-
   <div class="mobile-header">
     <div class="home-logo">English<span>.</span></div>
     <div class="home-badges">
+      <div class="pill" style="background:var(--red-light);color:var(--red-dark)">🔥 <span id="h-streak">0</span></div>
       <div class="pill pill-xp">⚡ <span id="h-xp">0</span> XP</div>
       <button class="theme-btn" onclick="toggleTheme()">🌙</button>
     </div>
@@ -340,7 +356,8 @@ function getLevel(xp){for(let i=LEVELS.length-1;i>=0;i--){if(xp>=LEVELS[i].min)r
 function lessonMastery(lid){const m=ST.mastery&&ST.mastery[lid];if(!m)return 0;const acts=["mcq","fill","match","tap","err"];const scores=acts.filter(a=>m[a]!==undefined).map(a=>m[a]);if(!scores.length)return 0;return Math.round(scores.reduce((a,b)=>a+b,0)/scores.length);}
 function masteryColor(p){return p>=80?"var(--green)":p>=50?"var(--primary)":"var(--yellow)";}
 function loadLocalST(){try{const r=localStorage.getItem(SK);if(r)return JSON.parse(r);}catch(e){}return{xp:0,completed:[],actDone:{},retryCount:{},mastery:{}};}
-function saveST(){try{localStorage.setItem(SK,JSON.stringify(ST));}catch(e){}pushCloud();}
+function saveLocal(){try{localStorage.setItem(SK,JSON.stringify(ST));}catch(e){}}
+function saveST(){saveLocal();pushCloud();}
 async function pushCloud(){const pp=localStorage.getItem(PK);if(!pp)return;try{await SB.from('progress').upsert({user_id:pp,data:ST,updated_at:new Date().toISOString()});}catch(e){}}
 function showPPModal(){return new Promise(r=>{_ppRes=r;document.getElementById('pp-modal').style.display='flex';setTimeout(()=>document.getElementById('pp-inp').focus(),80);});}
 function confirmPP(){const v=document.getElementById('pp-inp').value.trim();if(!v){toast('Enter a passphrase first');return;}document.getElementById('pp-modal').style.display='none';if(_ppRes){_ppRes(v);_ppRes=null;}}
@@ -353,13 +370,15 @@ async function initApp(){
     else{ST=loadLocalST();pushCloud();}
   }catch(e){ST=loadLocalST();}
   if(!ST.mastery)ST.mastery={};
+  ensureDailyFields();
+  startStudyTimer();
   buildHome();
   buildSidebar();
 }
-function addXP(n){ST.xp+=n;saveST();const el=document.getElementById("h-xp");if(el)el.textContent=ST.xp;buildSidebar();}
+function addXP(n){ensureDailyFields();const _t=todayStr();if(ST.lastStudyDay!==_t){if(ST.lastStudyDay&&dayDiff(ST.lastStudyDay,_t)===1)ST.streak=(ST.streak||0)+1;else ST.streak=1;ST.lastStudyDay=_t;if(ST.streak>(ST.bestStreak||0))ST.bestStreak=ST.streak;}ST.xp+=n;ST.dailyXP.xp+=n;saveST();const el=document.getElementById("h-xp");if(el)el.textContent=ST.xp;buildSidebar();}
 function markActDone(lid,act,score,total){if(!ST.actDone[lid])ST.actDone[lid]={};ST.actDone[lid][act]=true;if(score!==undefined&&total!==undefined){if(!ST.mastery)ST.mastery={};if(!ST.mastery[lid])ST.mastery[lid]={};ST.mastery[lid][act]=Math.round((score/total)*100);}saveST();buildTabs(lid);checkComplete(lid);buildSidebar();}
 const MAIN_LESSONS=new Set(["pos","articles","tenses","agreement","phrases","clauses","sentencetypes","punctuation","mistakes","register","clarity","cohesion","explaining","erroranalysis","academic"]);
-function checkComplete(lid){if(!MAIN_LESSONS.has(lid))return;const acts=["mcq","fill","match","tap","err"];if(acts.every(a=>ST.actDone[lid]&&ST.actDone[lid][a])&&!ST.completed.includes(lid)){ST.completed.push(lid);ST.xp+=50;saveST();toast("🎉 Lesson complete! +50 XP");buildHome();}}
+function checkComplete(lid){if(!MAIN_LESSONS.has(lid))return;const acts=["mcq","fill","match","tap","err"];if(acts.every(a=>ST.actDone[lid]&&ST.actDone[lid][a])&&!ST.completed.includes(lid)){ST.completed.push(lid);ST.xp+=50;ensureDailyFields();ST.dailyXP.xp+=50;saveST();toast("🎉 Lesson complete! +50 XP");buildHome();}}
 function lessonCompletion(lid){const acts=["mcq","fill","match","tap","err"];const done=acts.filter(a=>ST.actDone[lid]&&ST.actDone[lid][a]).length;return{done,total:acts.length,pct:Math.round((done/acts.length)*100)};}
 function subCompletion(slid){const acts=["mcq","fill"];const done=acts.filter(a=>ST.actDone[slid]&&ST.actDone[slid][a]).length;return{done,total:acts.length,pct:Math.round((done/acts.length)*100)};}
 function actScore(lid,act){return ST.mastery&&ST.mastery[lid]&&ST.mastery[lid][act]!==undefined?ST.mastery[lid][act]:null;}
@@ -367,6 +386,18 @@ function getRC(lid,act){if(!ST.retryCount[lid])ST.retryCount[lid]={};return ST.r
 function incRC(lid,act){if(!ST.retryCount[lid])ST.retryCount[lid]={};ST.retryCount[lid][act]=(ST.retryCount[lid][act]||0)+1;saveST();}
 function shuffle(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;}
 function pickSet(arr,n,att){const s=(att*n)%arr.length;const res=[];for(let i=0;i<n;i++)res.push(arr[(s+i)%arr.length]);return res;}
+
+// ── M1: consistency layer (streak, daily goal, countdown, study timer) ──
+const TARGET_DATE="2026-08-06";
+function todayStr(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function dayDiff(a,b){return Math.round((Date.parse(b+"T00:00:00")-Date.parse(a+"T00:00:00"))/86400000);}
+function daysToTarget(){return dayDiff(todayStr(),TARGET_DATE);}
+function ensureDailyFields(){const t=todayStr();if(ST.streak==null)ST.streak=0;if(ST.bestStreak==null)ST.bestStreak=0;if(ST.goalXP==null)ST.goalXP=50;if(!ST.dailyXP||ST.dailyXP.date!==t)ST.dailyXP={date:t,xp:0};if(!ST.studySeconds)ST.studySeconds={total:0,today:0,day:t};if(ST.studySeconds.day!==t){ST.studySeconds.day=t;ST.studySeconds.today=0;}if(ST.lastStudyDay&&dayDiff(ST.lastStudyDay,t)>1)ST.streak=0;}
+function fmtStudyTime(s){s=Math.floor(s||0);const h=Math.floor(s/3600),m=Math.floor((s%3600)/60);if(h>0)return h+"h "+m+"m";if(m>0)return m+"m";return s+"s";}
+let _studyDirty=false,_studyTick=null;
+function studyTick(){const scr=document.querySelector(".screen.active");if(!scr||document.visibilityState!=="visible")return;if(scr.id!=="scr-lesson"&&scr.id!=="scr-sub")return;ensureDailyFields();ST.studySeconds.today++;ST.studySeconds.total++;_studyDirty=true;if(ST.studySeconds.total%20===0)saveLocal();}
+function flushStudy(){if(_studyDirty){saveST();_studyDirty=false;}}
+function startStudyTimer(){if(!_studyTick)_studyTick=setInterval(studyTick,1000);document.addEventListener("visibilitychange",function(){if(document.visibilityState==="hidden")flushStudy();});}
 
 const PHASES=[
   {label:"Phase 1 — Building Blocks",lessons:[
@@ -941,7 +972,7 @@ function getQs(l,a){const d=ds(l,a);if(d.qs)return d.qs;const les=LD[l];const at
 
 let curL=null,curA="overview";
 function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");}
-function goHome(){showScreen("scr-home");buildHome();}
+function goHome(){flushStudy();showScreen("scr-home");buildHome();}
 function openLesson(lid){const d=LD[lid];if(!d){toast("Coming soon! 🚧");return;}curL=lid;curA="overview";document.getElementById("lh-t").textContent=d.title;document.getElementById("lh-s").textContent=d.sub;showScreen("scr-lesson");buildTabs(lid);showAct(lid,"overview");buildSidebar();}
 const TABS=[{id:"overview",label:"📖 Overview"},{id:"flashcards",label:"🃏 Flashcards"},{id:"mcq",label:"❓ Quiz"},{id:"fill",label:"✏️ Fill Blank"},{id:"match",label:"🔗 Match"},{id:"tap",label:"👆 Tap Word"},{id:"err",label:"🔍 Error Fix"}];
 function buildTabs(lid){const row=document.getElementById("tabs-row");row.innerHTML="";TABS.forEach(t=>{const isDone=t.id!=="overview"&&t.id!=="flashcards"&&ST.actDone[lid]&&ST.actDone[lid][t.id];const score=isDone?actScore(lid,t.id):null;const btn=document.createElement("div");btn.className="tab"+(curA===t.id?" active":"")+(isDone?" done-tab":"");btn.textContent=isDone?(score!==null?t.label+" "+score+"%":t.label+" ✓"):t.label;btn.onclick=()=>{curA=t.id;buildTabs(lid);showAct(lid,t.id);};row.appendChild(btn);});}
@@ -1114,17 +1145,26 @@ function subDoneBanner(slid,act,score,total,nextAct){
 
 function buildHome(){
   const el=document.getElementById("h-xp");if(el)el.textContent=ST.xp;
+  ensureDailyFields();
+  const sEl=document.getElementById("h-streak");if(sEl)sEl.textContent=ST.streak||0;
   const lv=getLevel(ST.xp),nextLv=LEVELS[lv.idx+1];
   const xpIn=ST.xp-lv.min,xpTo=nextLv?nextLv.min-lv.min:1;
   const lvPct=nextLv?Math.round((xpIn/xpTo)*100):100;
   const total=PHASES.flatMap(p=>p.lessons).length;
   const pct=Math.round((ST.completed.length/total)*100);
+  const streak=ST.streak||0,dXP=ST.dailyXP.xp,gXP=ST.goalXP||50,goalPct=Math.min(100,Math.round((dXP/gXP)*100)),daysLeft=daysToTarget(),todaySec=ST.studySeconds.today;
   document.getElementById("home-body").innerHTML=`
     <div class="welcome">
       <div class="welcome-title">Welcome back, Mohammad 👋</div>
       <div class="welcome-sub">Every lesson brings you closer to the classroom.</div>
       <div class="prog-row"><span>Overall Progress</span><span>${pct}%</span></div>
       <div class="prog-track"><div class="prog-fill" style="width:${pct}%"></div></div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-card"><div class="stat-ico">🔥</div><div class="stat-val">${streak}</div><div class="stat-lbl">Day streak</div></div>
+      <div class="stat-card"><div class="goal-ring" style="--p:${goalPct}"><div class="goal-ring-inner">${goalPct}%</div></div><div class="stat-val" style="font-size:13px">${dXP}/${gXP} XP</div><div class="stat-lbl">Daily goal</div></div>
+      <div class="stat-card"><div class="stat-ico">${daysLeft>0?"⏳":"🎓"}</div><div class="stat-val">${daysLeft>0?daysLeft:"✓"}</div><div class="stat-lbl">${daysLeft>0?"Days to Aug 6":"Target reached"}</div></div>
+      <div class="stat-card"><div class="stat-ico">⏱️</div><div class="stat-val" style="font-size:15px">${fmtStudyTime(todaySec)}</div><div class="stat-lbl">Studied today</div></div>
     </div>
     <div class="level-strip">
       <div class="level-emoji">${lv.emoji}</div>
@@ -1163,6 +1203,10 @@ function buildSidebar(){
   const t=document.documentElement.getAttribute('data-theme')||'light';
   let h=`<div class="sb-top"><div class="sb-logo">English<span>.</span></div><button class="theme-btn" onclick="toggleTheme()">${t==='dark'?'☀️':'🌙'}</button></div>`;
   h+=`<div class="sb-level-wrap"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="font-size:20px">${lv.emoji}</span><div><div class="sb-level-name">${lv.name}</div><div class="sb-level-xp">${ST.xp} XP${nextLv?" · "+nextLv.min+" to "+nextLv.name:""}</div></div></div><div class="sb-prog-track"><div class="sb-prog-fill" style="width:${pct}%;background:${lv.color}"></div></div></div>`;
+  ensureDailyFields();
+  const sStreak=ST.streak||0,sDaysLeft=daysToTarget(),sDXP=ST.dailyXP.xp,sGXP=ST.goalXP||50,sGoalPct=Math.min(100,Math.round((sDXP/sGXP)*100));
+  h+=`<div class="sb-stats"><div class="sb-stat">🔥<b>${sStreak}</b><span>day streak</span></div><div class="sb-stat">${sDaysLeft>0?"⏳":"🎓"}<b>${sDaysLeft>0?sDaysLeft:"✓"}</b><span>${sDaysLeft>0?"days left":"target"}</span></div></div>`;
+  h+=`<div class="sb-goal-wrap"><div class="sb-goal-top"><span>Daily goal</span><span>${sDXP}/${sGXP} XP</span></div><div class="sb-goal-track"><div class="sb-goal-fill" style="width:${sGoalPct}%"></div></div></div>`;
   h+=`<div class="sb-lessons">`;
   PHASES.forEach(ph=>{
     h+=`<div class="sb-phase">${ph.label}</div>`;

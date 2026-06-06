@@ -9,7 +9,8 @@ Mohammad — Kuwaiti, English Masters from Penn State (Rochester, 2017–2019), 
 **URL:** https://m3amazon-cmyk.github.io/English-mastery/
 **Repo:** https://github.com/m3amazon-cmyk/English-mastery
 **Local path:** `/Users/malhusaini/Desktop/ENGLISH WEBSITE/`
-**Key file:** `index.html` — single-file vanilla JS app, ~168K chars
+**Key file:** `index.html` — single-file vanilla JS app, ~178K chars
+**Roadmap/plan:** `nimbalyst-local/plans/english-mastery-roadmap.md` (local, gitignored) — 7-milestone plan; M1 done, M2 (Lesson 5) next
 
 ---
 
@@ -18,7 +19,7 @@ Mohammad — Kuwaiti, English Masters from Penn State (Rochester, 2017–2019), 
 - **Publishable key:** `sb_publishable_vyCD7qOBTheSMhM6fgXeLw_me3ViUg6`
 - **Table:** `progress(user_id text PK, data jsonb, updated_at timestamptz)`
 - **Auth:** passphrase stored in `localStorage` key `em_passphrase`
-- **localStorage key:** `em_full_v1` → `{xp, completed[], actDone{}, retryCount{}, mastery{}}`
+- **localStorage key:** `em_full_v1` → `{xp, completed[], actDone{}, retryCount{}, mastery{}, streak, bestStreak, lastStudyDay, dailyXP{date,xp}, goalXP, studySeconds{total,today,day}}`
 
 ---
 
@@ -117,13 +118,14 @@ Dark mode via `[data-theme="dark"]` on `<html>`. Theme stored in `localStorage('
 - `git` ✅, `brew` ✅, `gh` ✅ (authenticated as `m3amazon-cmyk`)
 - GitHub Pages auto-deploys on push to `main`
 - No Node/npm needed (plain HTML)
-- Use `Edit` tool (not `Write`) for changes — file is large (~168K chars)
+- Use `Edit` tool (not `Write`) for changes — file is large (~178K chars)
+- **No Node** — to syntax-check JS: extract the inline `<script>` and run `osascript -l JavaScript` with `new Function(code)`. To visually verify: build a seeded copy (stub Supabase + preset `localStorage`) and screenshot via headless Chrome (`/Applications/Google Chrome.app/Contents/MacOS/Google Chrome --headless=new --screenshot`).
 - Use `mcp__nimbalyst-mcp__developer_git_commit_proposal` or standard git for commits
 
 ---
 
 ## Git state
-Branch: `main`. All changes committed and pushed. Recent commits:
+Branch: `main`. All changes committed and pushed (M1 consistency layer shipped 2026-06-06). Recent commits:
 - `0696e1c` Add completion percentages to lessons, sub-lessons, and activity tabs
 - `04a0726` Add 14 sub-lessons with in-depth explanations and exercises
 - `1e7dd47` Add sidebar, level system, mastery tracking, Error Fix tab, and Lesson 4
@@ -131,7 +133,15 @@ Branch: `main`. All changes committed and pushed. Recent commits:
 
 ---
 
-## Suggested next features (discussed with user, not yet built)
+## Roadmap status
+
+See `nimbalyst-local/plans/english-mastery-roadmap.md` for the full 7-milestone plan and locked decisions (target date **2026-08-06**; lessons **co-authored** — Claude drafts, Mohammad supplies select examples; Teacher Mode = **per-lesson tab**).
+
+- ✅ **M1 — Consistency layer** (daily streak, daily-goal ring, Aug-6 countdown, study timer) — shipped 2026-06-06
+- ⏭️ **M2 — Phase 2 content (Lessons 5–8)** — Lesson 5 (Phrases) is the next drop
+- M3 Phase 3 (9–12) · M4 Phase 4 (13–15) · M5 Teacher Mode · M6 Review/retention · M7 Polish
+
+## Suggested next features (original brainstorm — superseded by the roadmap above)
 
 ### High priority
 1. **Lessons 5–8 content** (Phase 2: Phrases, Clauses, Sentence Types, Punctuation) — biggest gap
