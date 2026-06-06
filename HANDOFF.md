@@ -9,7 +9,7 @@ Mohammad — Kuwaiti, English Masters from Penn State (Rochester, 2017–2019), 
 **URL:** https://m3amazon-cmyk.github.io/English-mastery/
 **Repo:** https://github.com/m3amazon-cmyk/English-mastery
 **Local path:** `/Users/malhusaini/Desktop/ENGLISH WEBSITE/`
-**Key file:** `index.html` — single-file vanilla JS app, ~178K chars
+**Key file:** `index.html` — single-file vanilla JS app, ~204K chars
 **Roadmap/plan:** `nimbalyst-local/plans/english-mastery-roadmap.md` (local, gitignored) — 7-milestone plan; M1 done, M2 (Lesson 5) next
 
 ---
@@ -31,12 +31,13 @@ Mohammad — Kuwaiti, English Masters from Penn State (Rochester, 2017–2019), 
 - Built with: Plus Jakarta Sans, blue primary `#4F6EF7`, dark mode toggle, 14px border radius
 
 ### Structure
-4 Phases, 15 lessons. **4 lessons have full content:**
+4 Phases, 15 lessons. **5 lessons have full content:**
 - ✅ Lesson 1 — Parts of Speech (`pos`) — unlocked
 - ✅ Lesson 2 — Articles & Determiners (`articles`) — unlocked
 - ✅ Lesson 3 — Verb Tenses & Aspect (`tenses`) — unlocked
 - ✅ Lesson 4 — Subject-Verb Agreement (`agreement`) — unlocked
-- 🔒 Lessons 5–15 — no content yet
+- ✅ Lesson 5 — Phrases (`phrases`) — unlocked (Phase 2)
+- 🔒 Lessons 6–15 — no content yet
 
 ### Activities per lesson (7 tabs)
 Overview, Flashcards, MCQ Quiz (6 q), Fill in Blank (5 q), Match Pairs, Tap Word, **Error Fix** (6 q)
@@ -57,8 +58,9 @@ Each of the 4 active lessons has 3–4 sub-lessons with:
 | Articles | The Definite Article · A and An · Zero Article |
 | Verb Tenses | Present Tenses · Past Tenses · Future Forms · Stative Verbs & Used To |
 | Agreement | Basic Rules · Indefinite Pronouns · Collective Nouns |
+| Phrases | Noun Phrases · Verb Phrases · Prepositional Phrases · Adjective & Adverb Phrases |
 
-Sub-lesson IDs: `pos_nouns`, `pos_verbs`, `pos_adj_adv`, `pos_prep_conj`, `art_the`, `art_a_an`, `art_zero`, `ten_present`, `ten_past`, `ten_future`, `ten_stative`, `agr_basic`, `agr_pronouns`, `agr_collective`
+Sub-lesson IDs: `pos_nouns`, `pos_verbs`, `pos_adj_adv`, `pos_prep_conj`, `art_the`, `art_a_an`, `art_zero`, `ten_present`, `ten_past`, `ten_future`, `ten_stative`, `agr_basic`, `agr_pronouns`, `agr_collective`, `phr_noun`, `phr_verb`, `phr_prep`, `phr_modifier`
 
 ### Level system
 ```js
@@ -91,6 +93,7 @@ const LEVELS=[
 - articles: 22 MCQ, 16 fill, 6 match sets, 10 tap, 6 err
 - tenses: 20 MCQ, 16 fill, 6 match sets, 10 tap, 6 err
 - agreement: 12 MCQ, 10 fill, 4 match sets, 8 tap, 6 err
+- phrases: 14 MCQ, 12 fill, 5 match sets, 10 tap, 6 err
 
 ### Key JS architecture notes
 - `LD` object holds all lesson data. Sub-lessons registered into `LD` dynamically via `LD[slid]` when first opened
@@ -118,7 +121,7 @@ Dark mode via `[data-theme="dark"]` on `<html>`. Theme stored in `localStorage('
 - `git` ✅, `brew` ✅, `gh` ✅ (authenticated as `m3amazon-cmyk`)
 - GitHub Pages auto-deploys on push to `main`
 - No Node/npm needed (plain HTML)
-- Use `Edit` tool (not `Write`) for changes — file is large (~178K chars)
+- Use `Edit` tool (not `Write`) for changes — file is large (~204K chars)
 - **No Node** — to syntax-check JS: extract the inline `<script>` and run `osascript -l JavaScript` with `new Function(code)`. To visually verify: build a seeded copy (stub Supabase + preset `localStorage`) and screenshot via headless Chrome (`/Applications/Google Chrome.app/Contents/MacOS/Google Chrome --headless=new --screenshot`).
 - Use `mcp__nimbalyst-mcp__developer_git_commit_proposal` or standard git for commits
 
@@ -138,7 +141,7 @@ Branch: `main`. All changes committed and pushed (M1 consistency layer shipped 2
 See `nimbalyst-local/plans/english-mastery-roadmap.md` for the full 7-milestone plan and locked decisions (target date **2026-08-06**; lessons **co-authored** — Claude drafts, Mohammad supplies select examples; Teacher Mode = **per-lesson tab**).
 
 - ✅ **M1 — Consistency layer** (daily streak, daily-goal ring, Aug-6 countdown, study timer) — shipped 2026-06-06
-- ⏭️ **M2 — Phase 2 content (Lessons 5–8)** — Lesson 5 (Phrases) is the next drop
+- 🔧 **M2 — Phase 2 content (Lessons 5–8)** — ✅ Lesson 5 (Phrases) shipped; Lessons 6–8 (clauses, sentencetypes, punctuation) pending review
 - M3 Phase 3 (9–12) · M4 Phase 4 (13–15) · M5 Teacher Mode · M6 Review/retention · M7 Polish
 
 ## Suggested next features (original brainstorm — superseded by the roadmap above)
