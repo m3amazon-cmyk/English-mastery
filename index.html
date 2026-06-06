@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <script>try{var _t=localStorage.getItem('em_theme');if(_t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
 <title>English Mastery — Lesson 3: Verb Tenses</title>
@@ -184,6 +185,13 @@ html,body{height:100%;background:var(--bg);font-family:'Plus Jakarta Sans',sans-
 [data-theme="dark"] .rule-b{color:#FDE68A;}
 [data-theme="dark"] .rule-b strong{color:#FEF9EE;}
 .theme-btn{width:34px;height:34px;border-radius:10px;background:var(--surface);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;transition:background .2s;}
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;}
+.modal-box{background:var(--white);border-radius:var(--r);padding:28px 22px;width:100%;max-width:340px;box-shadow:var(--shadow-md);}
+.modal-ttl{font-size:18px;font-weight:800;margin-bottom:6px;}
+.modal-desc{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:16px;}
+.modal-inp{width:100%;padding:12px 14px;border-radius:var(--r-sm);border:2px solid var(--border);font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:600;outline:none;color:var(--text);background:var(--bg);margin-bottom:6px;}
+.modal-inp:focus{border-color:var(--primary);}
+.modal-hint{font-size:11px;color:var(--dim);margin-bottom:18px;line-height:1.6;}
 </style>
 </head>
 <body>
@@ -216,13 +224,37 @@ html,body{height:100%;background:var(--bg);font-family:'Plus Jakarta Sans',sans-
   </div>
 </div>
 
+<div class="modal-ov" id="pp-modal" style="display:none">
+  <div class="modal-box">
+    <div class="modal-ttl">🔑 Sync passphrase</div>
+    <div class="modal-desc">Choose a secret word or phrase. Enter the same one on any device to restore your progress.</div>
+    <input class="modal-inp" id="pp-inp" type="text" placeholder="e.g. kuwait2025" autocomplete="off" autocorrect="off" autocapitalize="off" onkeydown="if(event.key==='Enter')confirmPP()"/>
+    <div class="modal-hint">Keep it simple. You'll need it on new devices — there's no way to recover it.</div>
+    <button class="btn primary" style="width:100%" onclick="confirmPP()">Save & continue →</button>
+  </div>
+</div>
 <div class="toast" id="toast-el"></div>
 
 <script>
-const SK="em_full_v1";
-function loadST(){try{const r=localStorage.getItem(SK);if(r)return JSON.parse(r);}catch(e){}return{xp:0,completed:[],actDone:{},retryCount:{}};}
-function saveST(){try{localStorage.setItem(SK,JSON.stringify(ST));}catch(e){}}
-let ST=loadST();
+const SB=supabase.createClient('https://wcfoymiqfpzoxctexdub.supabase.co','sb_publishable_vyCD7qOBTheSMhM6fgXeLw_me3ViUg6');
+const SK="em_full_v1",PK="em_passphrase";
+let ST={};
+let _ppRes=null;
+function loadLocalST(){try{const r=localStorage.getItem(SK);if(r)return JSON.parse(r);}catch(e){}return{xp:0,completed:[],actDone:{},retryCount:{}};}
+function saveST(){try{localStorage.setItem(SK,JSON.stringify(ST));}catch(e){}pushCloud();}
+async function pushCloud(){const pp=localStorage.getItem(PK);if(!pp)return;try{await SB.from('progress').upsert({user_id:pp,data:ST,updated_at:new Date().toISOString()});}catch(e){}}
+function showPPModal(){return new Promise(r=>{_ppRes=r;document.getElementById('pp-modal').style.display='flex';setTimeout(()=>document.getElementById('pp-inp').focus(),80);});}
+function confirmPP(){const v=document.getElementById('pp-inp').value.trim();if(!v){toast('Enter a passphrase first');return;}document.getElementById('pp-modal').style.display='none';if(_ppRes){_ppRes(v);_ppRes=null;}}
+async function initApp(){
+  let pp=localStorage.getItem(PK);
+  if(!pp){pp=await showPPModal();localStorage.setItem(PK,pp);}
+  try{
+    const{data}=await SB.from('progress').select('data').eq('user_id',pp).maybeSingle();
+    if(data&&data.data){ST=data.data;try{localStorage.setItem(SK,JSON.stringify(ST));}catch(e){}}
+    else{ST=loadLocalST();pushCloud();}
+  }catch(e){ST=loadLocalST();}
+  buildHome();
+}
 function addXP(n){ST.xp+=n;saveST();document.getElementById("h-xp").textContent=ST.xp;}
 function markActDone(lid,act){if(!ST.actDone[lid])ST.actDone[lid]={};ST.actDone[lid][act]=true;saveST();buildTabs(lid);checkComplete(lid);}
 function checkComplete(lid){const acts=["mcq","fill","match","tap","reorder"];if(acts.every(a=>ST.actDone[lid]&&ST.actDone[lid][a])&&!ST.completed.includes(lid)){ST.completed.push(lid);ST.xp+=50;saveST();toast("🎉 Lesson complete! +50 XP");buildHome();}}
@@ -382,7 +414,7 @@ function buildHome(){
 function toast(msg){const el=document.getElementById("toast-el");el.textContent=msg;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),2800);}
 function toggleTheme(){const dark=document.documentElement.getAttribute('data-theme')==='dark';const t=dark?'light':'dark';document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem('em_theme',t);}catch(e){}document.querySelectorAll('.theme-btn').forEach(b=>b.textContent=t==='dark'?'☀️':'🌙');}
 (function(){const t=document.documentElement.getAttribute('data-theme')||'light';document.querySelectorAll('.theme-btn').forEach(b=>b.textContent=t==='dark'?'☀️':'🌙');})();
-buildHome();
+initApp();
 </script>
 </body>
 </html>
