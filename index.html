@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+<title>English Mastery — Lesson 3: Verb Tenses</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{
+  --bg:#F7F8FA;--white:#FFFFFF;--surface:#F0F2F5;--border:#E4E7EC;
+  --text:#0D0F12;--muted:#6B7280;--dim:#9CA3AF;
+  --primary:#4F6EF7;--primary-light:#EEF1FE;--primary-dark:#3B56D9;
+  --green:#22C55E;--green-light:#DCFCE7;--green-dark:#16A34A;
+  --red:#EF4444;--red-light:#FEE2E2;--red-dark:#991B1B;
+  --yellow:#F59E0B;--yellow-light:#FEF3C7;
+  --purple:#8B5CF6;--purple-light:#EDE9FE;
+  --r:14px;--r-sm:10px;--r-full:999px;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 4px 12px rgba(0,0,0,.1);
+}
+html,body{height:100%;background:var(--bg);font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;color:var(--text);overflow:hidden;}
+.screen{display:none;height:100vh;flex-direction:column;overflow:hidden;}
+.screen.active{display:flex;}
+.home-header{background:var(--white);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.home-logo{font-size:19px;font-weight:800;}
+.home-logo span{color:var(--primary);}
+.home-badges{display:flex;gap:8px;}
+.pill{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:var(--r-full);font-size:13px;font-weight:600;}
+.pill-xp{background:var(--yellow-light);color:#92400E;}
+.pill-streak{background:var(--primary-light);color:var(--primary-dark);}
+.home-scroll{flex:1;overflow-y:auto;padding:16px;-webkit-overflow-scrolling:touch;}
+.home-scroll::-webkit-scrollbar{display:none;}
+.welcome{background:var(--primary);border-radius:var(--r);padding:20px;margin-bottom:20px;color:white;position:relative;overflow:hidden;}
+.welcome::after{content:'📚';position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:52px;opacity:.2;}
+.welcome-title{font-size:20px;font-weight:800;margin-bottom:3px;}
+.welcome-sub{font-size:13px;opacity:.8;margin-bottom:12px;}
+.prog-row{display:flex;justify-content:space-between;font-size:12px;opacity:.85;margin-bottom:5px;}
+.prog-track{height:6px;background:rgba(255,255,255,.3);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;background:white;border-radius:99px;transition:width .4s;}
+.phase-divider{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;padding:14px 0 8px;display:flex;align-items:center;gap:8px;}
+.phase-divider::before,.phase-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.lesson-card{background:var(--white);border-radius:var(--r);padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow);cursor:pointer;transition:all .15s;border:2px solid transparent;-webkit-user-select:none;}
+.lesson-card:active{transform:scale(.98);box-shadow:none;}
+.lesson-card.done{border-color:var(--green);}
+.lesson-card.locked{opacity:.45;cursor:default;}
+.l-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.l-icon.blue{background:var(--primary-light);}
+.l-icon.green{background:var(--green-light);}
+.l-icon.purple{background:var(--purple-light);}
+.l-icon.yellow{background:var(--yellow-light);}
+.l-info{flex:1;min-width:0;}
+.l-num{font-size:11px;font-weight:600;color:var(--muted);}
+.l-title{font-size:14px;font-weight:700;margin:1px 0;}
+.l-sub{font-size:12px;color:var(--muted);}
+.l-badge{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.l-badge.done{background:var(--green);color:white;font-size:13px;}
+.l-badge.go{background:var(--primary-light);color:var(--primary);font-size:16px;}
+.l-badge.lock{background:var(--surface);font-size:14px;}
+.lesson-header{background:var(--white);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.back-btn{width:36px;height:36px;border-radius:10px;background:var(--surface);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;font-family:inherit;color:var(--text);}
+.lh-info{flex:1;min-width:0;}
+.lh-title{font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lh-sub{font-size:11px;color:var(--muted);}
+.lesson-scroll{flex:1;overflow-y:auto;padding:14px;-webkit-overflow-scrolling:touch;}
+.lesson-scroll::-webkit-scrollbar{display:none;}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;margin-bottom:14px;-webkit-overflow-scrolling:touch;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{padding:8px 14px;border-radius:var(--r-full);border:2px solid var(--border);background:var(--white);font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .15s;font-family:inherit;}
+.tab.active{background:var(--primary);border-color:var(--primary);color:white;}
+.tab.done-tab{border-color:var(--green);color:var(--green-dark);}
+.tab.done-tab.active{background:var(--green);border-color:var(--green);color:white;}
+.card{background:var(--white);border-radius:var(--r);padding:18px;box-shadow:var(--shadow);margin-bottom:14px;}
+.intro-tag{display:inline-flex;align-items:center;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--primary);background:var(--primary-light);border-radius:var(--r-full);padding:3px 10px;margin-bottom:10px;}
+.intro-h{font-size:20px;font-weight:800;margin-bottom:6px;line-height:1.3;}
+.intro-desc{font-size:13.5px;color:var(--muted);line-height:1.75;}
+.ref-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:12px;}
+.ref-table th{text-align:left;padding:8px 10px;background:var(--surface);font-weight:700;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em;}
+.ref-table td{padding:8px 10px;border-top:1px solid var(--border);vertical-align:top;line-height:1.5;}
+.ref-table tr:nth-child(even) td{background:var(--surface);}
+.tense-name{font-weight:700;color:var(--primary-dark);}
+.signal{font-size:11px;color:var(--dim);font-style:italic;}
+.rule-box{background:var(--yellow-light);border-radius:var(--r-sm);padding:12px 14px;margin-bottom:14px;border-left:4px solid var(--yellow);}
+.rule-t{font-size:11px;font-weight:700;color:#92400E;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;}
+.rule-b{font-size:13px;color:#78350F;line-height:1.7;}
+.rule-b strong{color:#451A03;}
+.qwrap{background:var(--white);border-radius:var(--r);padding:18px;box-shadow:var(--shadow);margin-bottom:14px;}
+.qwrap-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.qwrap-title{font-size:14px;font-weight:700;}
+.qright{display:flex;align-items:center;gap:6px;}
+.qcounter{font-size:11px;font-weight:600;color:var(--muted);background:var(--surface);padding:3px 10px;border-radius:var(--r-full);}
+.sbadge{font-size:10px;font-weight:600;color:var(--primary-dark);background:var(--primary-light);padding:2px 8px;border-radius:var(--r-full);}
+.qprog{height:4px;background:var(--surface);border-radius:99px;margin-bottom:14px;overflow:hidden;}
+.qprog-fill{height:4px;background:var(--primary);border-radius:99px;transition:width .3s;}
+.q-text{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:12px;}
+.fc-scene{perspective:900px;margin-bottom:16px;height:180px;}
+.fc-card{width:100%;height:180px;transform-style:preserve-3d;transition:transform .45s;cursor:pointer;position:relative;display:grid;}
+.fc-card.flipped{transform:rotateY(180deg);}
+.fc-face{grid-area:1/1;border-radius:var(--r);backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;}
+.fc-front{background:var(--white);border:2px solid var(--border);box-shadow:var(--shadow-md);}
+.fc-back{background:var(--primary-light);border:2px solid var(--primary);transform:rotateY(180deg);}
+.fc-hint{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--dim);margin-bottom:8px;}
+.fc-word{font-size:20px;font-weight:800;margin-bottom:4px;line-height:1.3;}
+.fc-tap{font-size:12px;color:var(--dim);}
+.fc-def{font-size:13px;font-weight:700;color:var(--primary-dark);margin-bottom:6px;line-height:1.4;}
+.fc-ex{font-size:11px;color:var(--muted);font-style:italic;line-height:1.5;}
+.fc-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.fc-arrow{width:44px;height:44px;border-radius:12px;border:2px solid var(--border);background:var(--white);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;font-family:inherit;color:var(--text);}
+.fc-arrow:active{background:var(--surface);}
+.fc-arrow:disabled{opacity:.3;cursor:default;}
+.fc-dots{display:flex;gap:5px;align-items:center;}
+.fc-dot{width:7px;height:7px;border-radius:50%;background:var(--border);transition:all .2s;}
+.fc-dot.on{background:var(--primary);width:14px;border-radius:99px;}
+.mcq-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
+.mcq-opt{padding:13px 15px;border-radius:var(--r-sm);border:2px solid var(--border);background:var(--white);cursor:pointer;font-size:14px;font-weight:500;display:flex;align-items:center;gap:10px;transition:all .15s;-webkit-user-select:none;}
+.mcq-opt:active{transform:scale(.98);}
+.mcq-opt.sel{border-color:var(--primary);background:var(--primary-light);color:var(--primary-dark);}
+.mcq-opt.correct{border-color:var(--green);background:var(--green-light);color:var(--green-dark);}
+.mcq-opt.wrong{border-color:var(--red);background:var(--red-light);color:var(--red-dark);}
+.opt-key{width:26px;height:26px;border-radius:7px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.mcq-opt.sel .opt-key{background:var(--primary);color:white;}
+.mcq-opt.correct .opt-key{background:var(--green);color:white;}
+.mcq-opt.wrong .opt-key{background:var(--red);color:white;}
+.fill-sent{font-size:17px;font-weight:600;line-height:2.2;padding:14px;background:var(--surface);border-radius:var(--r-sm);margin-bottom:10px;}
+.fill-inp{border:none;border-bottom:3px solid var(--primary);background:transparent;font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:600;color:var(--primary-dark);outline:none;min-width:100px;max-width:200px;text-align:center;padding:0 2px;}
+.fill-inp.ok{border-color:var(--green);color:var(--green-dark);}
+.fill-inp.bad{border-color:var(--red);color:var(--red-dark);}
+.hint-tag{display:inline-block;font-size:11px;font-weight:600;color:var(--muted);background:var(--surface);border-radius:var(--r-full);padding:3px 10px;margin-bottom:10px;}
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.match-col{display:flex;flex-direction:column;gap:6px;}
+.match-item{padding:11px 10px;border-radius:var(--r-sm);border:2px solid var(--border);background:var(--white);cursor:pointer;font-size:12px;font-weight:600;text-align:center;transition:all .15s;line-height:1.4;-webkit-user-select:none;}
+.match-item:active{transform:scale(.97);}
+.match-item.sel{border-color:var(--primary);background:var(--primary-light);color:var(--primary-dark);}
+.match-item.ok{border-color:var(--green);background:var(--green-light);color:var(--green-dark);cursor:default;}
+.match-item.bad{border-color:var(--red);background:var(--red-light);color:var(--red-dark);cursor:default;}
+.tap-sent{font-size:17px;font-weight:600;line-height:2.4;padding:14px;background:var(--surface);border-radius:var(--r-sm);margin-bottom:12px;}
+.tap-word{display:inline-block;padding:2px 5px;border-radius:6px;cursor:pointer;border:2px solid transparent;transition:all .12s;margin:2px;-webkit-user-select:none;}
+.tap-word:active{transform:scale(.93);}
+.tap-word.sel{border-color:var(--primary);background:var(--primary-light);color:var(--primary-dark);}
+.tap-word.correct{border-color:var(--green);background:var(--green-light);color:var(--green-dark);}
+.tap-word.wrong{border-color:var(--red);background:var(--red-light);color:var(--red-dark);}
+.ro-label{font-size:12px;font-weight:600;color:var(--muted);margin-bottom:5px;}
+.ro-answer{min-height:50px;background:var(--surface);border-radius:var(--r-sm);border:2px dashed var(--border);padding:8px;display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;align-items:center;}
+.ro-pool{display:flex;flex-wrap:wrap;gap:6px;padding:10px;background:var(--white);border-radius:var(--r-sm);border:2px solid var(--border);margin-bottom:12px;min-height:50px;}
+.rtile{padding:8px 13px;border-radius:var(--r-sm);border:2px solid var(--border);background:var(--white);cursor:pointer;font-size:13px;font-weight:600;transition:all .15s;-webkit-user-select:none;}
+.rtile:active{transform:scale(.95);}
+.rtile.in{background:var(--primary-light);border-color:var(--primary);color:var(--primary-dark);}
+.rtile.ok{background:var(--green-light)!important;border-color:var(--green)!important;color:var(--green-dark)!important;}
+.rtile.bad{background:var(--red-light)!important;border-color:var(--red)!important;color:var(--red-dark)!important;}
+.fb{padding:11px 14px;border-radius:var(--r-sm);font-size:13px;font-weight:500;line-height:1.6;margin-bottom:12px;display:flex;align-items:flex-start;gap:8px;}
+.fb-ok{background:var(--green-light);color:var(--green-dark);}
+.fb-bad{background:var(--red-light);color:var(--red-dark);}
+.fb-info{background:var(--primary-light);color:var(--primary-dark);}
+.fb-icon{flex-shrink:0;font-size:15px;}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;}
+.btn{padding:11px 18px;border-radius:var(--r-sm);border:2px solid var(--border);font-size:14px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;background:var(--white);color:var(--muted);transition:all .15s;-webkit-user-select:none;}
+.btn:active{transform:scale(.97);}
+.btn.primary{background:var(--primary);border-color:var(--primary);color:white;}
+.btn.success{background:var(--green);border-color:var(--green);color:white;}
+.btn.sm{padding:8px 14px;font-size:13px;}
+.done-card{background:var(--white);border-radius:var(--r);padding:28px 20px;text-align:center;box-shadow:var(--shadow);}
+.done-emoji{font-size:44px;margin-bottom:8px;}
+.done-title{font-size:20px;font-weight:800;margin-bottom:6px;}
+.done-score{display:inline-flex;align-items:center;gap:6px;background:var(--primary-light);color:var(--primary-dark);font-size:14px;font-weight:700;padding:7px 16px;border-radius:var(--r-full);margin:10px 0 14px;}
+.done-sub{font-size:13px;color:var(--muted);margin-bottom:18px;}
+.unlock-banner{background:var(--green-light);border:2px solid var(--green);border-radius:var(--r);padding:18px;text-align:center;margin-bottom:14px;}
+.ub-emoji{font-size:36px;margin-bottom:8px;}
+.ub-title{font-size:16px;font-weight:800;color:var(--green-dark);margin-bottom:4px;}
+.ub-sub{font-size:13px;color:var(--green-dark);opacity:.8;}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a2e;color:white;padding:11px 20px;border-radius:var(--r-full);font-size:13px;font-weight:600;z-index:9999;transition:transform .3s ease;pointer-events:none;white-space:nowrap;box-shadow:var(--shadow-md);}
+.toast.show{transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div class="screen active" id="scr-home">
+  <div class="home-header">
+    <div class="home-logo">English<span>.</span></div>
+    <div class="home-badges">
+      <div class="pill pill-xp">⚡ <span id="h-xp">0</span> XP</div>
+      <div class="pill pill-streak">🔥 <span id="h-str">1</span></div>
+    </div>
+  </div>
+  <div class="home-scroll" id="home-body"></div>
+</div>
+
+<!-- LESSON -->
+<div class="screen" id="scr-lesson">
+  <div class="lesson-header">
+    <button class="back-btn" onclick="goHome()">←</button>
+    <div class="lh-info">
+      <div class="lh-title" id="lh-t">—</div>
+      <div class="lh-sub" id="lh-s">—</div>
+    </div>
+  </div>
+  <div class="lesson-scroll" id="lesson-scroll">
+    <div class="tabs" id="tabs-row"></div>
+    <div id="panels"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast-el"></div>
+
+<script>
+const SK="em_full_v1";
+function loadST(){try{const r=localStorage.getItem(SK);if(r)return JSON.parse(r);}catch(e){}return{xp:0,streak:1,completed:[],actDone:{},retryCount:{}};}
+function saveST(){try{localStorage.setItem(SK,JSON.stringify(ST));}catch(e){}}
+let ST=loadST();
+function addXP(n){ST.xp+=n;saveST();document.getElementById("h-xp").textContent=ST.xp;}
+function markActDone(lid,act){if(!ST.actDone[lid])ST.actDone[lid]={};ST.actDone[lid][act]=true;saveST();buildTabs(lid);checkComplete(lid);}
+function checkComplete(lid){const acts=["mcq","fill","match","tap","reorder"];if(acts.every(a=>ST.actDone[lid]&&ST.actDone[lid][a])&&!ST.completed.includes(lid)){ST.completed.push(lid);ST.xp+=50;saveST();toast("🎉 Lesson complete! +50 XP");buildHome();}}
+function getRC(lid,act){if(!ST.retryCount[lid])ST.retryCount[lid]={};return ST.retryCount[lid][act]||0;}
+function incRC(lid,act){if(!ST.retryCount[lid])ST.retryCount[lid]={};ST.retryCount[lid][act]=(ST.retryCount[lid][act]||0)+1;saveST();}
+function shuffle(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;}
+function pickSet(arr,n,att){const s=(att*n)%arr.length;const res=[];for(let i=0;i<n;i++)res.push(arr[(s+i)%arr.length]);return res;}
+
+const PHASES=[
+  {label:"Phase 1 — Building Blocks",lessons:[
+    {id:"pos",num:1,title:"Parts of Speech",sub:"The 8 categories every word belongs to",icon:"🔤",color:"blue",unlocked:true},
+    {id:"articles",num:2,title:"Articles & Determiners",sub:"a, an, the — and when to skip them",icon:"📌",color:"green",unlocked:true},
+    {id:"tenses",num:3,title:"Verb Tenses & Aspect",sub:"12 tenses mastered clearly",icon:"⏰",color:"purple",unlocked:true},
+    {id:"agreement",num:4,title:"Subject-Verb Agreement",sub:"Matching subjects and verbs",icon:"🔗",color:"yellow",unlocked:false},
+  ]},
+  {label:"Phase 2 — Sentence Structure",lessons:[
+    {id:"phrases",num:5,title:"Phrases",sub:"Noun, verb, adjective, adverb...",icon:"🧩",color:"blue",unlocked:false},
+    {id:"clauses",num:6,title:"Clauses",sub:"Independent, dependent, relative",icon:"🔀",color:"green",unlocked:false},
+    {id:"sentencetypes",num:7,title:"Sentence Types",sub:"Simple, compound, complex",icon:"📝",color:"purple",unlocked:false},
+    {id:"punctuation",num:8,title:"Punctuation",sub:"How punctuation shapes meaning",icon:"✍️",color:"yellow",unlocked:false},
+  ]},
+  {label:"Phase 3 — Precision & Style",lessons:[
+    {id:"mistakes",num:9,title:"Common Mistakes",sub:"The errors that trip everyone up",icon:"🚨",color:"blue",unlocked:false},
+    {id:"register",num:10,title:"Word Choice & Register",sub:"Formal vs informal English",icon:"🎭",color:"green",unlocked:false},
+    {id:"clarity",num:11,title:"Conciseness & Clarity",sub:"Say more with less",icon:"🎯",color:"purple",unlocked:false},
+    {id:"cohesion",num:12,title:"Coherence & Cohesion",sub:"Writing that flows naturally",icon:"🌊",color:"yellow",unlocked:false},
+  ]},
+  {label:"Phase 4 — The Teacher's Edge",lessons:[
+    {id:"explaining",num:13,title:"Explaining Grammar Simply",sub:"The art of clear instruction",icon:"💡",color:"blue",unlocked:false},
+    {id:"erroranalysis",num:14,title:"Error Analysis",sub:"Identifying & correcting mistakes",icon:"🔍",color:"green",unlocked:false},
+    {id:"academic",num:15,title:"Academic vs Everyday English",sub:"Knowing which register to use",icon:"🎓",color:"purple",unlocked:false},
+  ]},
+];
+
+const LD={
+  pos:{
+    title:"Parts of Speech",sub:"Lesson 1 — Phase 1",
+    intro:{tag:"Lesson 1",h:"The 8 Parts of Speech",desc:"Every word in English has a job. These 8 categories tell us what that job is. Master them and everything else in grammar becomes clearer."},
+    defs:[{icon:"🏷️",t:"Noun",d:"Person, place, thing, or idea",e:"student, Kuwait, freedom"},{icon:"🔄",t:"Pronoun",d:"Replaces a noun",e:"he, she, they, it"},{icon:"⚡",t:"Verb",d:"Action or state of being",e:"run, teach, is, become"},{icon:"🎨",t:"Adjective",d:"Describes a noun",e:"brilliant, long, cold"},{icon:"🎯",t:"Adverb",d:"Modifies verb / adj / adverb",e:"quickly, very, always"},{icon:"🔗",t:"Preposition",d:"Shows relationship",e:"in, on, at, by, for"},{icon:"➕",t:"Conjunction",d:"Connects words or clauses",e:"and, but, or, so"},{icon:"😮",t:"Interjection",d:"Expresses emotion",e:"Wow! Oh! Oops!"}],
+    fc:[{f:"Noun",h:"Part of Speech",b:"A person, place, thing, or idea",e:"student, Kuwait, freedom, table"},{f:"Pronoun",h:"Part of Speech",b:"Replaces a noun to avoid repetition",e:"he, she, they, it, we, I"},{f:"Verb",h:"Part of Speech",b:"An action or state of being",e:"run, teach, think, is, become"},{f:"Adjective",h:"Part of Speech",b:"Describes or modifies a noun",e:"brilliant, long, ancient, small"},{f:"Adverb",h:"Part of Speech",b:"Modifies a verb, adjective, or adverb",e:"quickly, very, always, clearly"},{f:"Preposition",h:"Part of Speech",b:"Shows relationship between words",e:"in, on, at, by, for, with"},{f:"Conjunction",h:"Part of Speech",b:"Connects words, phrases, or clauses",e:"and, but, or, so, yet, nor"},{f:"Interjection",h:"Part of Speech",b:"Expresses emotion — grammatically independent",e:"Wow! Oh! Oops! Great!"}],
+    mcqBank:[{q:'What part of speech is "happiness" in: "Happiness is contagious"?',opts:["Verb","Adjective","Noun","Adverb"],ans:2,exp:'"Happiness" is an abstract noun — it names an idea or feeling even though you cannot touch it.'},{q:'In "She runs very fast," what part of speech is "very"?',opts:["Adjective","Adverb","Verb","Conjunction"],ans:1,exp:'"Very" is an adverb — it modifies the adverb "fast." Adverbs can modify other adverbs.'},{q:'In "Kuwait and Japan are beautiful countries," what is "and"?',opts:["Preposition","Adverb","Pronoun","Conjunction"],ans:3,exp:'"And" is a coordinating conjunction (FANBOYS). It connects two nouns: Kuwait and Japan.'},{q:'What is the verb in: "The students were excited about the trip"?',opts:["students","excited","trip","were"],ans:3,exp:'"Were" is the linking verb (a form of "to be"). "Excited" is an adjective describing the students.'},{q:'What part of speech is "on" in: "The book is on the table"?',opts:["Adjective","Conjunction","Preposition","Adverb"],ans:2,exp:'"On" is a preposition — it shows the spatial relationship between "book" and "table."'},{q:'"Quickly" in "She spoke quickly" is a:',opts:["Noun","Adjective","Verb","Adverb"],ans:3,exp:'"Quickly" modifies the verb "spoke" — telling us HOW she spoke. That makes it an adverb.'},{q:'What part of speech is "he" in: "He finished his homework early"?',opts:["Noun","Pronoun","Verb","Adjective"],ans:1,exp:'"He" is a pronoun — it replaces a person\'s name to avoid repetition.'},{q:'In "Wow, that was incredible!", what is "Wow"?',opts:["Noun","Adverb","Verb","Interjection"],ans:3,exp:'"Wow" is an interjection — it expresses sudden emotion with no grammatical connection to the rest.'},{q:'What part of speech is "between" in: "The book is between the chairs"?',opts:["Adjective","Adverb","Preposition","Conjunction"],ans:2,exp:'"Between" is a preposition — it shows the positional relationship.'},{q:'In "She is a brilliant teacher," what part of speech is "brilliant"?',opts:["Adverb","Noun","Adjective","Verb"],ans:2,exp:'"Brilliant" is an adjective — it describes the noun "teacher."'},{q:'What is "or" in: "You can study English or French"?',opts:["Preposition","Conjunction","Pronoun","Adverb"],ans:1,exp:'"Or" is a coordinating conjunction — it connects two alternatives.'},{q:'In "The children played happily in the park," what is "happily"?',opts:["Adjective","Noun","Adverb","Preposition"],ans:2,exp:'"Happily" is an adverb — it tells us HOW the children played.'}],
+    fillBank:[{b:"The",a:"student passed all her exams.",h:"adjective",ac:["brilliant","hardworking","talented","smart","diligent","excellent","good","dedicated"],ex:"Any adjective works: brilliant, hardworking, talented, smart..."},{b:"",a:"! I forgot my homework.",h:"interjection",ac:["oh","wow","oops","shoot","ah","ugh","oh!","wow!","oops!"],ex:"An interjection like Oh!, Wow!, or Oops! expresses a sudden emotion."},{b:"She spoke",a:"in front of the class.",h:"adverb",ac:["confidently","clearly","loudly","fluently","slowly","quickly","nervously","well","softly"],ex:'An adverb tells us HOW she spoke.'},{b:"I love English",a:"grammar is not always easy.",h:"conjunction",ac:["but","yet","though","although","and"],ex:'"But" or "yet" connects two contrasting ideas.'},{b:"The students studied",a:"the exam.",h:"preposition",ac:["for","before","after","during"],ex:'A preposition like "for" or "before" shows the time relationship.'},{b:"Mohammad is",a:"excellent instructor.",h:"a / an",ac:["an"],ex:'"Instructor" starts with a vowel sound — use "an."'},{b:"",a:"teaches English at Kuwait University.",h:"pronoun",ac:["she","he"],ex:'A pronoun like "She" or "He" replaces a name.'},{b:"The weather in Kuwait is",a:"hot in summer.",h:"adverb",ac:["extremely","very","incredibly","terribly","quite","really","so"],ex:'An adverb intensifies the adjective "hot."'},{b:"Knowledge",a:"confidence build a strong future.",h:"conjunction",ac:["and","or"],ex:'"And" connects two nouns as subjects.'},{b:"She put her notes",a:"the desk before class.",h:"preposition",ac:["on","under","beside","near","by","at"],ex:'A preposition shows where she put the notes.'}],
+    matchBank:[{pairs:[{l:"Noun",r:"Kuwait, student, idea"},{l:"Verb",r:"runs, teaches, is"},{l:"Adjective",r:"brilliant, long, cold"},{l:"Adverb",r:"quickly, very, always"}]},{pairs:[{l:"Pronoun",r:"he, she, they, it"},{l:"Preposition",r:"in, on, at, by, for"},{l:"Conjunction",r:"and, but, or, so"},{l:"Interjection",r:"Wow! Oh! Oops!"}]},{pairs:[{l:"Noun",r:"teacher, city, freedom"},{l:"Adverb",r:"slowly, often, never"},{l:"Preposition",r:"through, over, under"},{l:"Conjunction",r:"yet, nor, for"}]},{pairs:[{l:"Adjective",r:"beautiful, ancient, tiny"},{l:"Pronoun",r:"we, you, them"},{l:"Verb",r:"wrote, become, are"},{l:"Interjection",r:"Hey! Great! Ouch!"}]}],
+    tapBank:[{s:["The","teacher","explained","the","rules","of","grammar","in","class"],task:"Tap all the NOUNS.",correct:[1,4,6,8],ex:"Nouns: teacher (person), rules (thing), grammar (concept), class (place)."},{s:["She","quickly","solved","a","difficult","problem","in","the","classroom"],task:"Tap the ADVERB.",correct:[1],ex:'"Quickly" is the adverb — it tells us HOW she solved the problem.'},{s:["Wow","the","brilliant","student","answered","every","question","correctly"],task:"Tap the ADJECTIVE.",correct:[2],ex:'"Brilliant" is the adjective — it describes the noun "student."'},{s:["Knowledge","and","confidence","open","doors","for","everyone"],task:"Tap the CONJUNCTION.",correct:[1],ex:'"And" is the conjunction — it connects "Knowledge" and "confidence."'},{s:["Mohammad","teaches","English","grammar","at","Kuwait","University"],task:"Tap all the NOUNS.",correct:[0,2,3,5,6],ex:"Nouns: Mohammad (person), English (language), grammar (concept), Kuwait (place), University (place)."},{s:["She","nervously","walked","into","the","bright","classroom"],task:"Tap the ADVERB.",correct:[1],ex:'"Nervously" tells us HOW she walked.'},{s:["He","speaks","English","fluently","and","Arabic","perfectly"],task:"Tap the two ADVERBS.",correct:[3,6],ex:'"Fluently" and "perfectly" both tell us HOW he speaks each language.'},{s:["Oops","I","dropped","my","new","phone","again"],task:"Tap the INTERJECTION.",correct:[0],ex:'"Oops" expresses a sudden emotional reaction and stands alone grammatically.'}],
+    roBank:[{tiles:["quickly","The","problem","solved","student","the"],correct:["The","student","solved","the","problem","quickly"],ex:"Subject (The student) + Verb (solved) + Object (the problem) + Adverb (quickly)."},{tiles:["class","teaches","grammar","She","in","English"],correct:["She","teaches","English","grammar","in","class"],ex:"Pronoun + Verb + Object (English grammar) + Prepositional phrase (in class)."},{tiles:["and","Kuwait","beautiful","Japan","are","countries"],correct:["Kuwait","and","Japan","are","beautiful","countries"],ex:"Two nouns joined by 'and' + linking verb 'are' + adjective + noun."},{tiles:["very","is","Mohammad","instructor","an","talented"],correct:["Mohammad","is","an","very","talented","instructor"],ex:"Subject + Linking verb + Article + Adverb + Adjective + Noun."},{tiles:["Wow","speech","was","brilliant","that"],correct:["Wow","that","speech","was","brilliant"],ex:"Interjection + Subject + Linking verb + Adjective."},{tiles:["always","She","for","prepares","carefully","class"],correct:["She","always","prepares","carefully","for","class"],ex:"Subject + Adverb + Verb + Adverb + Preposition + Noun."}],
+  },
+  articles:{
+    title:"Articles & Determiners",sub:"Lesson 2 — Phase 1",
+    intro:{tag:"Lesson 2",h:"Articles & Determiners",desc:"Articles are small but powerful. Getting them right makes your English sound natural and professional. The key rule: it's about SOUND, not spelling."},
+    rule:{t:"⚠️ Critical Rule — Sound, not spelling",b:'Use <strong>"an"</strong> before vowel sounds: <em>an apple, an hour, an honest man, an MBA</em><br>Use <strong>"a"</strong> before consonant sounds: <em>a book, a university ("yoo"), a European, a one-way street</em>'},
+    defs:[{icon:"✅",t:'"the"',d:"Definite — specific, known noun",e:'"Pass me the book."'},{icon:"1️⃣",t:'"a"',d:"Indefinite — consonant sound",e:'"I need a pen."'},{icon:"🔡",t:'"an"',d:"Indefinite — vowel sound",e:'"She is an engineer."'},{icon:"∅",t:"Zero Article",d:"No article — general / proper nouns",e:'"Kuwait is beautiful."'}],
+    fc:[{f:'"the"',h:"Article",b:"Definite article — both speaker and listener know which specific noun is meant",e:'"Pass me the book." (we both know which book)'},{f:'"a"',h:"Article",b:'Indefinite — used before consonant sounds for non-specific nouns',e:'"I need a pen." / "She is a teacher."'},{f:'"an"',h:"Article",b:'Indefinite — used before VOWEL SOUNDS (not just vowel letters)',e:'"an apple, an hour, an MBA, an honest man"'},{f:"Zero Article",h:"Article",b:"No article — proper nouns, general plurals, uncountable nouns used generally",e:'"Dogs are loyal." / "Kuwait is hot."'},{f:'"a university"',h:"Tricky Case",b:'Starts with U but sounds like "yoo" (consonant sound) → use "a"',e:'"He is a university student." ✓'},{f:'"an hour"',h:"Tricky Case",b:'Starts with H but the H is silent → vowel sound → use "an"',e:'"It took an hour." ✓'},{f:'"the piano"',h:"Special Rule",b:'Musical instruments always use "the"',e:'"She plays the piano." / "He learned the guitar."'},{f:"Zero + proper noun",h:"Special Rule",b:"Country names, people's names, city names take no article",e:'"Kuwait is hot." Exception: The UAE, The USA'}],
+    mcqBank:[{q:'___ sun rises in the east.',opts:["A","An","The","No article"],ans:2,exp:'"The sun" — there is only one sun. Unique things take "the."'},{q:'She is ___ engineer.',opts:["a","an","the","no article"],ans:1,exp:'"An engineer" — "engineer" starts with a vowel sound. Use "an" before VOWEL SOUNDS.'},{q:'I saw ___ bird in the garden.',opts:["a","an","the","no article"],ans:0,exp:'"A bird" — first mention, non-specific. It could be any bird.'},{q:'___ water is essential for life.',opts:["A","An","The","No article"],ans:3,exp:'Uncountable nouns used generally take NO article.'},{q:'He is ___ university student.',opts:["a","an","the","no article"],ans:0,exp:'"University" sounds like "yoo" — a consonant sound. Use "a."'},{q:'___ Kuwait is a beautiful country.',opts:["A","An","The","No article"],ans:3,exp:'Country names take no article. Exception: The UAE, The USA.'},{q:'She plays ___ piano beautifully.',opts:["a","an","the","no article"],ans:2,exp:'Musical instruments always take "the."'},{q:'___ honesty is the best policy.',opts:["A","An","The","No article"],ans:3,exp:'Abstract nouns used generally take no article.'},{q:'Can you pass me ___ salt, please?',opts:["a","an","the","no article"],ans:2,exp:'"The salt" — specific salt on the table known to both parties.'},{q:'She gave me ___ useful piece of advice.',opts:["a","an","the","no article"],ans:0,exp:'"Useful" starts with a "yoo" consonant sound — use "a."'},{q:'I need ___ hour to finish this.',opts:["a","an","the","no article"],ans:1,exp:'"Hour" has a silent H — vowel sound. Use "an."'},{q:'He graduated from ___ Oxford University.',opts:["a","an","the","no article"],ans:3,exp:'Most university names take no article: Oxford University, Kuwait University.'},{q:'___ dogs make great companions.',opts:["A","An","The","No article"],ans:3,exp:'General statements about a whole category take no article.'},{q:'I had ___ egg for breakfast.',opts:["a","an","the","no article"],ans:1,exp:'"An egg" — "egg" starts with a vowel sound. Use "an."'}],
+    fillBank:[{b:"I have",a:"idea that could help.",h:"a / an / the / —",ac:["an"],ex:'"An idea" — "idea" starts with a vowel sound.'},{b:"",a:"honesty is the best policy.",h:"a / an / the / —",ac:["—","-",""],ex:'No article. Abstract nouns used generally take no article.'},{b:"She plays",a:"piano beautifully.",h:"a / an / the / —",ac:["the"],ex:'Musical instruments always take "the."'},{b:"He is",a:"honest man.",h:"a / an / the / —",ac:["an"],ex:'"Honest" has a silent H — begins with a vowel sound. Use "an."'},{b:"I need",a:"umbrella today.",h:"a / an / the / —",ac:["an"],ex:'"Umbrella" starts with a vowel sound — use "an."'},{b:"Can you pass me",a:"salt?",h:"a / an / the / —",ac:["the"],ex:'"The salt" — specific salt known to both parties.'},{b:"She gave",a:"excellent presentation.",h:"a / an",ac:["an"],ex:'"Excellent" starts with a vowel sound — use "an."'},{b:"",a:"knowledge is power.",h:"a / an / the / —",ac:["—","-",""],ex:'Abstract noun used generally — no article needed.'},{b:"It took",a:"hour to get there.",h:"a / an",ac:["an"],ex:'"Hour" has a silent H — use "an."'},{b:"He is studying at",a:"Kuwait University.",h:"a / an / the / —",ac:["—","-",""],ex:'Most university proper names take no article.'}],
+    matchBank:[{pairs:[{l:"the sun",r:"Unique — only one"},{l:"a bird",r:"First mention, any bird"},{l:"an apple",r:"Vowel sound — 'a'"},{l:"— water",r:"General uncountable"}]},{pairs:[{l:"a university",r:"Consonant sound 'yoo'"},{l:"an hour",r:"Silent H — vowel sound"},{l:"the piano",r:"Musical instrument"},{l:"— Kuwait",r:"Country name"}]},{pairs:[{l:"the book",r:"Specific, known to both"},{l:"an engineer",r:"Vowel sound — 'e'"},{l:"— dogs",r:"General plural"},{l:"a useful tip",r:"Consonant sound 'yoo'"}]},{pairs:[{l:"an MBA",r:"Vowel sound — 'em'"},{l:"the Moon",r:"Unique — only one"},{l:"— honesty",r:"Abstract noun, general"},{l:"a European",r:"Consonant sound 'yoo'"}]}],
+    tapBank:[{s:["I","saw","a","bird","near","the","old","window","this","morning"],task:"Tap the DEFINITE article.",correct:[5],ex:'"The" (before "old window") refers to a specific known window.'},{s:["He","is","an","excellent","instructor","at","a","university"],task:"Tap the INDEFINITE articles.",correct:[2,6],ex:'"An" and "a" are both indefinite articles here.'},{s:["The","sun","rises","in","the","east","every","morning"],task:"Tap all uses of 'the'.",correct:[0,4],ex:'Both "The sun" and "the east" use the definite article.'},{s:["She","bought","a","book","and","an","umbrella","at","the","store"],task:"Tap all articles.",correct:[2,5,8],ex:'"a book," "an umbrella," and "the store" — three articles in one sentence.'},{s:["Mohammad","is","a","talented","and","an","inspiring","teacher"],task:"Tap the INDEFINITE articles.",correct:[2,5],ex:'"A talented" (consonant) and "an inspiring" (vowel sound) are both indefinite articles.'},{s:["The","students","studied","grammar","and","the","teacher","explained","it"],task:"Tap all uses of 'the'.",correct:[0,5],ex:'"The students" and "the teacher" both refer to specific known people.'}],
+    roBank:[{tiles:["saw","a","I","in","garden","the","bird"],correct:["I","saw","a","bird","in","the","garden"],ex:'"A bird" = first mention. "The garden" = a specific known garden.'},{tiles:["The","is","sun","in","sky","the","bright"],correct:["The","sun","is","bright","in","the","sky"],ex:'Both "the sun" and "the sky" are unique/specific.'},{tiles:["plays","She","piano","the","beautifully"],correct:["She","plays","the","piano","beautifully"],ex:'Musical instruments always take "the."'},{tiles:["an","She","gave","advice","excellent","piece","of"],correct:["She","gave","an","excellent","piece","of","advice"],ex:'"An excellent" — "excellent" starts with a vowel sound.'},{tiles:["University","is","Kuwait","beautiful","a","country"],correct:["Kuwait","is","a","beautiful","country"],ex:'"Kuwait" = proper noun, no article. "a beautiful country" = non-specific description.'}],
+  },
+  tenses:{
+    title:"Verb Tenses & Aspect",sub:"Lesson 3 — Phase 1",
+    intro:{tag:"Lesson 3",h:"Verb Tenses & Aspect",desc:"English has 12 tenses formed by combining time (past, present, future) with aspect (simple, continuous, perfect, perfect continuous). Master them and you'll teach with confidence."},
+    rule:{t:"The big pattern",b:'<strong>Simple</strong> = the fact. <strong>Perfect</strong> = connection to another time. <strong>Continuous</strong> = action in progress.<br><br>Key signals: <em>yesterday/last year</em> → Past Simple | <em>since/for/already/yet</em> → Present Perfect | <em>when + interruption</em> → Past Continuous | <em>by + future time</em> → Future Perfect'},
+    defs:[{icon:"1️⃣",t:"Present Simple",d:"Habits, facts, general truths",e:"She teaches every day."},{icon:"2️⃣",t:"Present Continuous",d:"Happening now or temporary",e:"She is teaching right now."},{icon:"3️⃣",t:"Present Perfect",d:"Past action, present relevance",e:"She has taught here for years."},{icon:"4️⃣",t:"Past Simple",d:"Completed action, specific time",e:"She taught in 2018."},{icon:"5️⃣",t:"Past Continuous",d:"In progress when interrupted",e:"She was teaching when I arrived."},{icon:"6️⃣",t:"Past Perfect",d:"Before another past action",e:"She had taught before I was born."},{icon:"7️⃣",t:"Future (will)",d:"Predictions, promises, instant decisions",e:"She will teach tomorrow."},{icon:"8️⃣",t:"Going to",d:"Plans decided, evidence-based prediction",e:"She is going to teach tomorrow."}],
+    fc:[{f:"Present Simple",h:"Tense",b:"Habits, facts, and general truths.",e:"She teaches English every day. / Water boils at 100°C."},{f:"Present Continuous",h:"Tense",b:"An action happening right now or a temporary situation.",e:"She is teaching a class right now. / I am studying this week."},{f:"Present Perfect",h:"Tense",b:"A past action connected to the present — exact time doesn't matter.",e:"She has taught at three universities. / I have lived here for two years."},{f:"Present Perfect Continuous",h:"Tense",b:"Emphasises how long an action has been ongoing — still happening or just stopped.",e:"She has been teaching for five hours. / I have been studying since morning."},{f:"Past Simple",h:"Tense",b:"A completed action at a specific time in the past.",e:"I studied in Pennsylvania for six years. / She explained the rule clearly."},{f:"Past Continuous",h:"Tense",b:"An action in progress when another action interrupted it.",e:"I was studying when my phone rang. / She was teaching when the director walked in."},{f:"Past Perfect",h:"Tense",b:"An action that happened before another past action — the past of the past.",e:"When I arrived, the students had already started. / She had taught for ten years before she got her PhD."},{f:"Past Perfect Continuous",h:"Tense",b:"Emphasises how long an action had been going on before another past event.",e:"She had been teaching for three hours when the fire alarm went off."},{f:"Future Simple (will)",h:"Tense",b:"Predictions, promises, and decisions made at the moment of speaking.",e:"I will teach at Kuwait University in the fall. / I'll help you with that."},{f:"Going to",h:"Tense",b:"Plans already decided, or predictions based on visible evidence.",e:"I am going to prepare my syllabus this weekend. / Watch out — you are going to fall!"},{f:"Future Continuous",h:"Tense",b:"An action that will be in progress at a specific future time.",e:"This time next year, I will be teaching my first class."},{f:"Future Perfect",h:"Tense",b:"An action that will be completed before a specific future time.",e:"By June, she will have taught 200 students."}],
+    mcqBank:[{q:'Which tense is used in: "She has been teaching for five hours"?',opts:["Present Perfect","Past Continuous","Present Perfect Continuous","Present Continuous"],ans:2,exp:"Present Perfect Continuous — emphasises how long the action has been going on. Key signal: 'for + duration' with an ongoing activity."},{q:'"I was reading when the phone rang." What tense is "was reading"?',opts:["Past Simple","Past Perfect","Past Continuous","Present Continuous"],ans:2,exp:"Past Continuous — it describes the background action in progress when another action (rang) interrupted it."},{q:'Choose the correct tense: "By the time she arrived, the class ___ already ___."',opts:["has / started","had / started","was / starting","will / start"],ans:1,exp:"Past Perfect (had started) — the class starting happened BEFORE she arrived. Past Perfect = the past of the past."},{q:'Which sentence uses the correct tense?',opts:["I live here since 2020.","I am living here since 2020.","I have lived here since 2020.","I lived here since 2020."],ans:2,exp:'"Since" signals Present Perfect. The action started in the past and continues now — "I have lived here since 2020." ✓'},{q:'"Watch out — you ___ fall!" Which form is correct?',opts:["will","are going to","have","were going to"],ans:1,exp:'"Are going to" — there is visible evidence right now (the person is losing balance). Going to = prediction based on evidence.'},{q:'What is the difference between "I lived in Kuwait" and "I have lived in Kuwait"?',opts:["No difference","First is wrong","First = finished fact; second = connected to present","Second = further in the past"],ans:2,exp:"Past Simple (lived) = closed, finished. Present Perfect (have lived) = the experience is still relevant to the present moment."},{q:'Choose the correct sentence:',opts:["She teaches here since 2018.","She has been teaching here since 2018.","She was teaching here since 2018.","She had taught here since 2018."],ans:1,exp:"Present Perfect Continuous + since — the action started in 2018 and is still ongoing."},{q:'"This time tomorrow, I ___ my first lecture." Which tense?',opts:["will give","am giving","will be giving","have given"],ans:2,exp:"Future Continuous — describes an action in progress at a specific future time ('this time tomorrow')."},{q:'Which signal word goes with Present Perfect?',opts:["yesterday","last year","already","in 2019"],ans:2,exp:'"Already" is a Present Perfect signal word. Yesterday, last year, and in 2019 go with Past Simple.'},{q:'"By June, she ___ 200 students." Which tense completes this correctly?',opts:["teaches","will teach","will have taught","is teaching"],ans:2,exp:"Future Perfect — the action will be completed BEFORE a specific future point (June). Signal: 'by + future time.'"},{q:'What tense is: "I am going to prepare my syllabus this weekend"?',opts:["Future Simple","Present Continuous","Going to future","Future Perfect"],ans:2,exp:"Going to future — the plan was already decided before the moment of speaking."},{q:'"She had been waiting for two hours when he finally arrived." What tense is "had been waiting"?',opts:["Past Perfect","Past Continuous","Present Perfect Continuous","Past Perfect Continuous"],ans:3,exp:"Past Perfect Continuous — emphasises the duration of an action ongoing before another past event (he arrived)."}],
+    fillBank:[{b:"I",a:"(live) in Rochester from 2017 to 2019.",h:"past simple",ac:["lived"],ex:"Past Simple — 'from 2017 to 2019' is a finished, closed time period."},{b:"She",a:"(teach) at Kuwait University since 2020.",h:"present perfect / present perfect continuous",ac:["has taught","has been teaching"],ex:"Present Perfect or Present Perfect Continuous — 'since' signals an action that started in the past and continues now."},{b:"I",a:"(study) when my friend called me.",h:"past continuous",ac:["was studying"],ex:"Past Continuous — background action in progress when another action (called) interrupted."},{b:"By the time I arrived, she already",a:"(leave).",h:"past perfect",ac:["had left"],ex:"Past Perfect — the leaving happened BEFORE the arriving. Past Perfect = the past of the past."},{b:"Watch out — you",a:"(fall)!",h:"going to",ac:["are going to fall","going to fall"],ex:"Going to — prediction based on visible evidence happening right now."},{b:"This time next year, I",a:"(teach) at Kuwait University.",h:"future continuous",ac:["will be teaching"],ex:"Future Continuous — action in progress at a specific future time."},{b:"She",a:"(teach) for ten years before she got her PhD.",h:"past perfect continuous",ac:["had been teaching"],ex:"Past Perfect Continuous — emphasises the duration before another past event."},{b:"By June, she",a:"(teach) over 200 students.",h:"future perfect",ac:["will have taught"],ex:"Future Perfect — will be completed before a specific future point (June)."},{b:"I",a:"(live) here for two years — and I love it.",h:"present perfect",ac:["have lived","have been living"],ex:"Present Perfect — started in the past and still relevant/ongoing now."},{b:"She",a:"(explain) the rule when the bell rang.",h:"past continuous",ac:["was explaining"],ex:"Past Continuous — in progress when another action (rang) interrupted it."}],
+    matchBank:[{pairs:[{l:"Present Simple",r:"She teaches every day."},{l:"Present Continuous",r:"She is teaching right now."},{l:"Present Perfect",r:"She has taught here for years."},{l:"Past Simple",r:"She taught in 2018."}]},{pairs:[{l:"Past Continuous",r:"She was teaching when I arrived."},{l:"Past Perfect",r:"She had taught before I was born."},{l:"Going to",r:"She is going to teach tomorrow."},{l:"Future Perfect",r:"She will have taught 200 by June."}]},{pairs:[{l:"since",r:"Present Perfect"},{l:"when + interruption",r:"Past Continuous"},{l:"by + future time",r:"Future Perfect"},{l:"yesterday / last year",r:"Past Simple"}]},{pairs:[{l:"for + duration (ongoing)",r:"Present Perfect Continuous"},{l:"already / yet / ever",r:"Present Perfect"},{l:"this time tomorrow",r:"Future Continuous"},{l:"before another past event",r:"Past Perfect"}]}],
+    tapBank:[{s:["She","has","been","teaching","English","for","five","hours"],task:"Tap the VERB PHRASE (all verb words).",correct:[1,2,3],ex:'"Has been teaching" — three words form this Present Perfect Continuous verb phrase.'},{s:["I","was","studying","when","my","friend","called","me"],task:"Tap the Past Continuous verb.",correct:[1,2],ex:'"Was studying" — two words form the Past Continuous (was + -ing).'},{s:["By","the","time","she","arrived","the","class","had","already","started"],task:"Tap the Past Perfect verb.",correct:[7,9],ex:'"Had started" — had + past participle. "Already" is the signal adverb, not part of the verb.'},{s:["This","time","next","year","I","will","be","teaching","my","first","class"],task:"Tap the Future Continuous verb.",correct:[5,6,7],ex:'"Will be teaching" — will + be + -ing forms the Future Continuous.'},{s:["She","has","taught","at","three","universities","so","far"],task:"Tap the Present Perfect verb.",correct:[1,2],ex:'"Has taught" — has + past participle forms the Present Perfect.'},{s:["Watch","out","you","are","going","to","fall"],task:"Tap the 'going to' future verb phrase.",correct:[3,4,5,6],ex:'"Are going to fall" — are + going to + base verb forms the going to future.'}],
+    roBank:[{tiles:["studying","I","when","was","called","friend","my","me"],correct:["I","was","studying","when","my","friend","called","me"],ex:"Past Continuous (was studying) + when + Past Simple (called) — classic interruption pattern."},{tiles:["taught","she","had","arrived","already","when","I"],correct:["She","had","already","taught","when","I","arrived"],ex:"Past Perfect (had taught) comes before the other past event (arrived)."},{tiles:["teaching","been","has","she","for","hours","five"],correct:["She","has","been","teaching","for","five","hours"],ex:"Present Perfect Continuous: has + been + -ing + for + duration."},{tiles:["will","teaching","be","I","year","next","time","this"],correct:["This","time","next","year","I","will","be","teaching"],ex:"Future Continuous: will + be + -ing. Signal: 'this time next year.'"},{tiles:["taught","will","she","students","200","have","June","by"],correct:["By","June","she","will","have","taught","200","students"],ex:"Future Perfect: will + have + past participle. Signal: 'by + future time.'"},{tiles:["going","are","fall","you","to"],correct:["You","are","going","to","fall"],ex:"Going to future — prediction based on visible evidence right now."}],
+  },
+};
+
+let DS={};
+function dsk(l,a){return l+"_"+a;}
+function ds(l,a){const k=dsk(l,a);if(!DS[k]){const att=getRC(l,a);DS[k]={qi:0,ans:false,sel:null,tapped:[],fv:"",roAns:[],roShuf:null,mSel:null,mDone:{},mShuf:null,score:0,done:false,fi:0,ff:false,fb:null,att,qs:null};}return DS[k];}
+function resetDS(l,a){incRC(l,a);delete DS[dsk(l,a)];}
+function getQs(l,a){const d=ds(l,a);if(d.qs)return d.qs;const les=LD[l];const att=d.att;let qs;if(a==="mcq")qs=pickSet(shuffle(les.mcqBank),6,att);else if(a==="fill")qs=pickSet(shuffle(les.fillBank),5,att);else if(a==="match")qs=[les.matchBank[att%les.matchBank.length]];else if(a==="tap")qs=pickSet(shuffle(les.tapBank),4,att);else if(a==="reorder")qs=pickSet(shuffle(les.roBank),3,att);d.qs=qs;return qs;}
+
+let curL=null,curA="overview";
+function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");}
+function goHome(){showScreen("scr-home");buildHome();}
+function openLesson(lid){const d=LD[lid];if(!d){toast("Coming soon! 🚧");return;}curL=lid;curA="overview";document.getElementById("lh-t").textContent=d.title;document.getElementById("lh-s").textContent=d.sub;showScreen("scr-lesson");buildTabs(lid);showAct(lid,"overview");}
+const TABS=[{id:"overview",label:"📖 Overview"},{id:"flashcards",label:"🃏 Flashcards"},{id:"mcq",label:"❓ Quiz"},{id:"fill",label:"✏️ Fill Blank"},{id:"match",label:"🔗 Match"},{id:"tap",label:"👆 Tap Word"},{id:"reorder",label:"🔀 Reorder"}];
+function buildTabs(lid){const row=document.getElementById("tabs-row");row.innerHTML="";TABS.forEach(t=>{const isDone=t.id!=="overview"&&t.id!=="flashcards"&&ST.actDone[lid]&&ST.actDone[lid][t.id];const btn=document.createElement("div");btn.className="tab"+(curA===t.id?" active":"")+(isDone?" done-tab":"");btn.textContent=isDone?t.label+" ✓":t.label;btn.onclick=()=>{curA=t.id;buildTabs(lid);showAct(lid,t.id);};row.appendChild(btn);});}
+function showAct(lid,act){const p=document.getElementById("panels");p.innerHTML="";document.getElementById("lesson-scroll").scrollTop=0;const d=LD[lid];if(act==="overview")p.innerHTML=renderOV(d,lid);else if(act==="flashcards")renderFC(lid,p);else if(act==="mcq")renderMCQ(lid,p);else if(act==="fill")renderFill(lid,p);else if(act==="match")renderMatch(lid,p);else if(act==="tap")renderTap(lid,p);else if(act==="reorder")renderRO(lid,p);}
+function rerender(lid,act){const p=document.getElementById("panels");if(!p)return;if(act==="flashcards")renderFC(lid,p);else if(act==="mcq")renderMCQ(lid,p);else if(act==="fill")renderFill(lid,p);else if(act==="match")renderMatch(lid,p);else if(act==="tap")renderTap(lid,p);else if(act==="reorder")renderRO(lid,p);}
+function switchAct(lid,act){curA=act;buildTabs(lid);showAct(lid,act);}
+
+function renderOV(d,lid){
+  let h=`<div class="card"><div class="intro-tag">${d.intro.tag}</div><div class="intro-h">${d.intro.h}</div><div class="intro-desc">${d.intro.desc}</div></div>`;
+  if(d.rule)h+=`<div class="rule-box"><div class="rule-t">${d.rule.t}</div><div class="rule-b">${d.rule.b}</div></div>`;
+  h+=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:8px;margin-bottom:14px">${d.defs.map(x=>`<div style="background:var(--white);border-radius:var(--r-sm);padding:12px;box-shadow:var(--shadow);border:1px solid var(--border)"><div style="font-size:18px;margin-bottom:5px">${x.icon}</div><div style="font-size:12px;font-weight:700;margin-bottom:2px">${x.t}</div><div style="font-size:11px;color:var(--muted);line-height:1.55;margin-bottom:2px">${x.d}</div><div style="font-size:10.5px;color:var(--dim);font-style:italic">${x.e}</div></div>`).join("")}</div>`;
+  h+=`<button class="btn primary" style="width:100%;margin-bottom:14px" onclick="switchAct('${lid}','flashcards')">Start learning →</button>`;
+  return h;
+}
+
+function renderFC(lid,el){const d=ds(lid,"flashcards");if(!d.qs){d.qs=shuffle(LD[lid].fc);}const cards=d.qs;const i=d.fi,c=cards[i],fl=d.ff;el.innerHTML=`<div class="qwrap"><div class="qwrap-top"><div class="qwrap-title">🃏 Flashcards</div><div class="qright"><div class="qcounter">${i+1}/${cards.length}</div></div></div><div class="qprog"><div class="qprog-fill" style="width:${((i+1)/cards.length)*100}%"></div></div><p class="q-text">Tap the card to reveal the definition.</p><div class="fc-scene"><div class="fc-card${fl?" flipped":""}" id="fc" onclick="fcFlip('${lid}')"><div class="fc-face fc-front"><div class="fc-hint">${c.h}</div><div class="fc-word">${c.f}</div><div class="fc-tap">Tap to reveal →</div></div><div class="fc-face fc-back"><div class="fc-hint">Usage</div><div class="fc-def">${c.b}</div><div class="fc-ex">${c.e}</div></div></div></div><div class="fc-nav"><button class="fc-arrow" onclick="fcPrev('${lid}')" ${i===0?"disabled":""}>←</button><div class="fc-dots">${cards.map((_,j)=>`<div class="fc-dot${j===i?" on":""}"></div>`).join("")}</div><button class="fc-arrow" onclick="fcNext('${lid}')" ${i===cards.length-1?"disabled":""}>→</button></div>${i===cards.length-1?`<button class="btn primary" style="width:100%" onclick="switchAct('${lid}','mcq')">Next: quiz →</button>`:""}</div>`;}
+function fcFlip(lid){const d=ds(lid,"flashcards");d.ff=!d.ff;rerender(lid,"flashcards");}
+function fcNext(lid){const d=ds(lid,"flashcards");if(d.fi<d.qs.length-1){d.fi++;d.ff=false;rerender(lid,"flashcards");}}
+function fcPrev(lid){const d=ds(lid,"flashcards");if(d.fi>0){d.fi--;d.ff=false;rerender(lid,"flashcards");}}
+
+function renderMCQ(lid,el){const d=ds(lid,"mcq"),qs=getQs(lid,"mcq");if(d.done){el.innerHTML=doneBanner(lid,"mcq",d.score,qs.length,"fill");return;}const q=qs[d.qi];let h=`<div class="qwrap"><div class="qwrap-top"><div class="qwrap-title">❓ Multiple choice</div><div class="qright"><div class="qcounter">${d.qi+1}/${qs.length}</div><span class="sbadge">Set ${d.att+1}</span></div></div><div class="qprog"><div class="qprog-fill" style="width:${(d.qi/qs.length)*100}%"></div></div><div class="q-text">${q.q}</div><div class="mcq-opts">`;q.opts.forEach((o,i)=>{let cls="mcq-opt";if(d.ans){if(i===q.ans)cls+=" correct";else if(i===d.sel&&i!==q.ans)cls+=" wrong";}else if(i===d.sel)cls+=" sel";h+=`<div class="${cls}" ${d.ans?"":"onclick=\"mSel('"+lid+"',"+i+")\""}><div class="opt-key">${String.fromCharCode(65+i)}</div>${o}</div>`;});h+=`</div>`;if(d.fb)h+=`<div class="fb fb-${d.fb.t}"><div class="fb-icon">${d.fb.t==="ok"?"✅":"❌"}</div><div>${d.fb.m}</div></div>`;h+=`<div class="btn-row">`;if(!d.ans)h+=`<button class="btn primary" onclick="mChk('${lid}')">Check ✓</button>`;if(d.ans&&d.qi<qs.length-1)h+=`<button class="btn primary" onclick="mNext('${lid}')">Next →</button>`;if(d.ans&&d.qi===qs.length-1)h+=`<button class="btn success" onclick="mNext('${lid}')">Finish 🎉</button>`;h+=`</div></div>`;el.innerHTML=h;}
+function mSel(lid,i){const d=ds(lid,"mcq");if(d.ans)return;d.sel=i;d.fb=null;rerender(lid,"mcq");}
+function mChk(lid){const d=ds(lid,"mcq"),qs=getQs(lid,"mcq"),q=qs[d.qi];if(d.sel===null){d.fb={t:"info",m:"Select an answer first."};rerender(lid,"mcq");return;}const ok=d.sel===q.ans;d.ans=true;d.fb={t:ok?"ok":"bad",m:q.exp};if(ok){d.score++;addXP(8);}rerender(lid,"mcq");}
+function mNext(lid){const d=ds(lid,"mcq"),qs=getQs(lid,"mcq");if(d.qi<qs.length-1){d.qi++;d.ans=false;d.sel=null;d.fb=null;rerender(lid,"mcq");}else{d.done=true;markActDone(lid,"mcq");rerender(lid,"mcq");}}
+
+function renderFill(lid,el){const d=ds(lid,"fill"),qs=getQs(lid,"fill");if(d.done){el.innerHTML=doneBanner(lid,"fill",d.score,qs.length,"match");return;}const q=qs[d.qi],v=d.fv||"";let ic="fill-inp"+(d.ans?(d.fb&&d.fb.t==="ok"?" ok":" bad"):"");let h=`<div class="qwrap"><div class="qwrap-top"><div class="qwrap-title">✏️ Fill in the blank</div><div class="qright"><div class="qcounter">${d.qi+1}/${qs.length}</div><span class="sbadge">Set ${d.att+1}</span></div></div><div class="qprog"><div class="qprog-fill" style="width:${(d.qi/qs.length)*100}%"></div></div><div class="q-text">Complete the sentence with the correct verb form.</div><div class="fill-sent">${q.b} <input id="fi" type="text" class="${ic}" placeholder="${q.h}" value="${v}" ${d.ans?"readonly":""} oninput="fType('${lid}',this.value)" onkeydown="if(event.key==='Enter'&&!${d.ans})fChk('${lid}')"/> ${q.a}</div><div class="hint-tag">Hint: ${q.h}</div>`;if(d.fb)h+=`<div class="fb fb-${d.fb.t}"><div class="fb-icon">${d.fb.t==="ok"?"✅":"❌"}</div><div>${d.fb.m}</div></div>`;h+=`<div class="btn-row">`;if(!d.ans)h+=`<button class="btn primary" onclick="fChk('${lid}')">Check ✓</button>`;if(d.ans&&d.qi<qs.length-1)h+=`<button class="btn primary" onclick="fNext('${lid}')">Next →</button>`;if(d.ans&&d.qi===qs.length-1)h+=`<button class="btn success" onclick="fNext('${lid}')">Finish 🎉</button>`;h+=`</div></div>`;el.innerHTML=h;const inp=document.getElementById("fi");if(inp&&!d.ans)setTimeout(()=>inp.focus(),80);}
+function fType(lid,v){ds(lid,"fill").fv=v;}
+function fChk(lid){const d=ds(lid,"fill"),qs=getQs(lid,"fill"),q=qs[d.qi];const v=(d.fv||"").trim().toLowerCase();if(!v){d.fb={t:"info",m:"Type an answer first."};rerender(lid,"fill");return;}const ok=q.ac.map(a=>a.toLowerCase()).some(a=>a===v);d.ans=true;d.fb={t:ok?"ok":"bad",m:ok?"Correct! "+q.ex:"A good answer: \""+q.ac[0]+"\". "+q.ex};if(ok){d.score++;addXP(8);}rerender(lid,"fill");}
+function fNext(lid){const d=ds(lid,"fill"),qs=getQs(lid,"fill");if(d.qi<qs.length-1){d.qi++;d.ans=false;d.fv="";d.fb=null;rerender(lid,"fill");}else{d.done=true;markActDone(lid,"fill");rerender(lid,"fill");}}
+
+function renderMatch(lid,el){const d=ds(lid,"match"),sets=getQs(lid,"match");if(d.done){el.innerHTML=doneBanner(lid,"match",d.score,sets.length,"tap");return;}const set=sets[d.qi],pairs=set.pairs;if(!d.mShuf)d.mShuf=shuffle(pairs.map(p=>p.r));let h=`<div class="qwrap"><div class="qwrap-top"><div class="qwrap-title">🔗 Match the pairs</div><div class="qright"><div class="qcounter">Set ${d.qi+1}/${sets.length}</div><span class="sbadge">Round ${d.att+1}</span></div></div><div class="qprog"><div class="qprog-fill" style="width:${((d.qi+1)/sets.length)*100}%"></div></div><div class="q-text">Tap a left item, then tap its match on the right.</div><div class="match-grid"><div class="match-col">`;pairs.forEach((p,i)=>{const st=d.mDone[i];let cls="match-item";if(st===true)cls+=" ok";else if(st===false)cls+=" bad";else if(d.mSel&&d.mSel.side==="left"&&d.mSel.i===i)cls+=" sel";h+=`<div class="${cls}" ${st!==undefined?"":"onclick=\"mpClick('"+lid+"','left',"+i+")\""}>${p.l}</div>`;});h+=`</div><div class="match-col">`;d.mShuf.forEach((r)=>{const oi=pairs.findIndex(p=>p.r===r);const st=d.mDone[oi];let cls="match-item";if(st===true)cls+=" ok";else if(st===false)cls+=" bad";else if(d.mSel&&d.mSel.side==="right"&&d.mSel.val===r)cls+=" sel";h+=`<div class="${cls}" ${st!==undefined?"":"onclick=\"mpClick('"+lid+"','right','"+r.replace(/'/g,"\\'")+"')\""} >${r}</div>`;});h+=`</div></div>`;if(d.fb)h+=`<div class="fb fb-${d.fb.t}"><div class="fb-icon">${d.fb.t==="ok"?"✅":"❌"}</div><div>${d.fb.m}</div></div>`;if(Object.keys(d.mDone).length===pairs.length){if(d.qi<sets.length-1)h+=`<button class="btn primary" style="width:100%" onclick="mpNext('${lid}')">Next set →</button>`;else h+=`<button class="btn success" style="width:100%" onclick="mpNext('${lid}')">Finish 🎉</button>`;}h+=`</div>`;el.innerHTML=h;}
+function mpClick(lid,side,val){const d=ds(lid,"match"),sets=getQs(lid,"match"),set=sets[d.qi],pairs=set.pairs;if(!d.mSel){d.mSel={side,i:typeof val==="number"?val:null,val:typeof val==="string"?val:null};d.fb=null;rerender(lid,"match");return;}const prev=d.mSel;if(prev.side===side){d.mSel={side,i:typeof val==="number"?val:null,val:typeof val==="string"?val:null};rerender(lid,"match");return;}let li=prev.side==="left"?prev.i:val;let rv=prev.side==="right"?prev.val:val;const ok=pairs[li].r===rv;d.mDone[li]=ok;if(ok){d.score++;addXP(5);d.fb={t:"ok",m:"Correct! ✓"};}else{d.fb={t:"bad",m:`"${pairs[li].l}" matches "${pairs[li].r}"`};}d.mSel=null;rerender(lid,"match");}
+function mpNext(lid){const d=ds(lid,"match"),sets=getQs(lid,"match");if(d.qi<sets.length-1){d.qi++;d.mDone={};d.mSel=null;d.mShuf=null;d.fb=null;rerender(lid,"match");}else{d.done=true;markActDone(lid,"match");rerender(lid,"match");}}
+
+function renderTap(lid,el){const d=ds(lid,"tap"),qs=getQs(lid,"tap");if(d.done){el.innerHTML=doneBanner(lid,"tap",d.score,qs.length,"reorder");return;}const q=qs[d.qi];if(!d.tapped)d.tapped=[];let h=`<div class="qwrap"><div class="qwrap-top"><div class="qwrap-title">👆 Tap the word</div><div class="qright"><div class="qcounter">${d.qi+1}/${qs.length}</div><span class="sbadge">Set ${d.att+1}</span></div></div><div class="qprog"><div class="qprog-fill" style="width:${(d.qi/qs.length)*100}%"></div></div><div class="q-text">${q.task}</div><div class="tap-sent">`;q.s.forEach((w,i)=>{let cls="tap-word";if(d.ans){if(q.correct.includes(i))cls+=" correct";else if(d.tapped.includes(i))cls+=" wrong";}else if(d.tapped.includes(i))cls+=" sel";h+=`<span class="${cls}" ${d.ans?"":"onclick=\"tW('"+lid+"',"+i+")\""}>${w}</span> `;});h+=`</div>`;if(d.fb)h+=`<div class="fb fb-${d.fb.t}"><div class="fb-icon">${d.fb.t==="ok"?"✅":"❌"}</div><div>${d.fb.m}</div></div>`;h+=`<div class="btn-row">`;if(!d.ans)h+=`<button class="btn primary" onclick="tChk('${lid}')">Check ✓</button>`;if(d.ans&&d.qi<qs.length-1)h+=`<button class="btn primary" onclick="tNext('${lid}')">Next →</button>`;if(d.ans&&d.qi===qs.length-1)h+=`<button class="btn success" onclick="tNext('${lid}')">Finish 🎉</button>`;h+=`</div></div>`;el.innerHTML=h;}
+function tW(lid,i){const d=ds(lid,"tap");if(d.ans)return;const x=d.tapped.indexOf(i);if(x>-1)d.tapped.splice(x,1);else d.tapped.push(i);rerender(lid,"tap");}
+function tChk(lid){const d=ds(lid,"tap"),qs=getQs(lid,"tap"),q=qs[d.qi];if(!d.tapped||!d.tapped.length){d.fb={t:"info",m:"Tap at least one word first."};rerender(lid,"tap");return;}const ok=q.correct.every(i=>d.tapped.includes(i))&&d.tapped.every(i=>q.correct.includes(i));d.ans=true;d.fb={t:ok?"ok":"bad",m:q.ex};if(ok){d.score++;addXP(8);}rerender(lid,"tap");}
+function tNext(lid){const d=ds(lid,"tap"),qs=getQs(lid,"tap");if(d.qi<qs.length-1){d.qi++;d.ans=false;d.tapped=[];d.fb=null;rerender(lid,"tap");}else{d.done=true;markActDone(lid,"tap");rerender(lid,"tap");}}
+
+function renderRO(lid,el){const d=ds(lid,"reorder"),qs=getQs(lid,"reorder");if(d.done){el.innerHTML=doneBanner(lid,"reorder",d.score,qs.length,null);return;}const q=qs[d.qi];if(!d.roShuf)d.roShuf=shuffle(q.tiles);const ans=d.roAns||[];const usedI=[];ans.forEach(w=>{const i=d.roShuf.findIndex((t,ti)=>t===w&&!usedI.includes(ti));if(i>-1)usedI.push(i);});const poolI=d.roShuf.map((_,i)=>i).filter(i=>!usedI.includes(i));let h=`<div class="qwrap"><div class="qwrap-top"><div class="qwrap-title">🔀 Build the sentence</div><div class="qright"><div class="qcounter">${d.qi+1}/${qs.length}</div><span class="sbadge">Set ${d.att+1}</span></div></div><div class="qprog"><div class="qprog-fill" style="width:${(d.qi/qs.length)*100}%"></div></div><div class="q-text">Tap words in the correct order.</div><div class="ro-label">Your answer (tap to remove):</div><div class="ro-answer">`;if(!ans.length)h+=`<span style="font-size:13px;color:var(--dim)">Tap words below...</span>`;ans.forEach((w,ai)=>{let cls="rtile in";if(d.ans)cls="rtile "+(w===q.correct[ai]?"ok":"bad");h+=`<span class="${cls}" ${d.ans?"":"onclick=\"roRm('"+lid+"',"+ai+")\""}>${w}</span>`;});h+=`</div><div class="ro-label">Word bank:</div><div class="ro-pool">`;poolI.forEach(i=>{h+=`<span class="rtile" onclick="roAdd('${lid}',${i})">${d.roShuf[i]}</span>`;});if(!poolI.length&&!d.ans)h+=`<span style="font-size:12px;color:var(--dim)">All placed!</span>`;h+=`</div>`;if(d.fb)h+=`<div class="fb fb-${d.fb.t}"><div class="fb-icon">${d.fb.t==="ok"?"✅":"❌"}</div><div>${d.fb.m}</div></div>`;h+=`<div class="btn-row">`;if(!d.ans){h+=`<button class="btn primary" onclick="roChk('${lid}')">Check ✓</button>`;if(ans.length)h+=`<button class="btn sm" onclick="roClear('${lid}')">Clear</button>`;}if(d.ans&&d.qi<qs.length-1)h+=`<button class="btn primary" onclick="roNext('${lid}')">Next →</button>`;if(d.ans&&d.qi===qs.length-1)h+=`<button class="btn success" onclick="roNext('${lid}')">Finish 🎉</button>`;h+=`</div></div>`;el.innerHTML=h;}
+function roAdd(lid,i){const d=ds(lid,"reorder");if(d.ans)return;d.roAns=[...(d.roAns||[]),d.roShuf[i]];rerender(lid,"reorder");}
+function roRm(lid,ai){const d=ds(lid,"reorder");if(d.ans)return;const a=[...(d.roAns||[])];a.splice(ai,1);d.roAns=a;rerender(lid,"reorder");}
+function roClear(lid){ds(lid,"reorder").roAns=[];rerender(lid,"reorder");}
+function roChk(lid){const d=ds(lid,"reorder"),qs=getQs(lid,"reorder"),q=qs[d.qi];if((d.roAns||[]).length<q.tiles.length){d.fb={t:"bad",m:"Place all words first."};rerender(lid,"reorder");return;}const ok=JSON.stringify(d.roAns)===JSON.stringify(q.correct);d.ans=true;d.fb={t:ok?"ok":"bad",m:ok?"Perfect! "+q.ex:"Correct: "+q.correct.join(" ")+" — "+q.ex};if(ok){d.score++;addXP(10);}rerender(lid,"reorder");}
+function roNext(lid){const d=ds(lid,"reorder"),qs=getQs(lid,"reorder");if(d.qi<qs.length-1){d.qi++;d.ans=false;d.roAns=[];d.roShuf=null;d.fb=null;rerender(lid,"reorder");}else{d.done=true;markActDone(lid,"reorder");rerender(lid,"reorder");}}
+
+function doneBanner(lid,act,score,total,nextAct){const pct=Math.round((score/total)*100);const em=pct===100?"🏆":pct>=70?"🎉":"💪";return `<div class="done-card"><div class="done-emoji">${em}</div><div class="done-title">${pct===100?"Perfect score!":pct>=70?"Great work!":"Keep practicing!"}</div><div class="done-score">${score}/${total} · ${pct}%</div><div class="done-sub">${pct===100?"You nailed every question.":pct>=70?"Strong effort — review any misses.":"Every attempt makes you stronger."}</div><div class="btn-row" style="justify-content:center"><button class="btn" onclick="retryAct('${lid}','${act}')">↺ New set</button>${nextAct?`<button class="btn primary" onclick="switchAct('${lid}','${nextAct}')">Next →</button>`:`<button class="btn success" onclick="goHome()">🏠 Home</button>`}</div></div>`;}
+function retryAct(lid,act){resetDS(lid,act);rerender(lid,act);}
+
+function buildHome(){
+  document.getElementById("h-xp").textContent=ST.xp;
+  document.getElementById("h-str").textContent=ST.streak;
+  const total=PHASES.flatMap(p=>p.lessons).length;
+  const pct=Math.round((ST.completed.length/total)*100);
+  document.getElementById("home-body").innerHTML=`
+    <div class="welcome">
+      <div class="welcome-title">Welcome back, Mohammad 👋</div>
+      <div class="welcome-sub">Every lesson brings you closer to the classroom.</div>
+      <div class="prog-row"><span>Overall Progress</span><span>${pct}%</span></div>
+      <div class="prog-track"><div class="prog-fill" style="width:${pct}%"></div></div>
+    </div>
+    ${PHASES.map(ph=>`
+      <div class="phase-divider">${ph.label}</div>
+      ${ph.lessons.map(l=>{
+        const done=ST.completed.includes(l.id);
+        const cls=`lesson-card${done?" done":l.unlocked?"":" locked"}`;
+        return `<div class="${cls}" ${(l.unlocked||done)?`onclick="openLesson('${l.id}')"`:""}> 
+          <div class="l-icon ${l.color}">${l.icon}</div>
+          <div class="l-info"><div class="l-num">Lesson ${l.num}</div><div class="l-title">${l.title}</div><div class="l-sub">${l.sub}</div></div>
+          <div class="l-badge ${done?"done":l.unlocked?"go":"lock"}">${done?"✓":l.unlocked?"→":"🔒"}</div>
+        </div>`;
+      }).join("")}
+    `).join("")}
+    <div style="height:24px"></div>`;
+}
+
+function toast(msg){const el=document.getElementById("toast-el");el.textContent=msg;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),2800);}
+buildHome();
+</script>
+</body>
+</html>
