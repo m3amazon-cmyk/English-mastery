@@ -9,8 +9,8 @@ Mohammad — Kuwaiti, English Masters from Penn State (Rochester, 2017–2019), 
 **URL:** https://m3amazon-cmyk.github.io/English-mastery/
 **Repo:** https://github.com/m3amazon-cmyk/English-mastery
 **Local path:** `/Users/malhusaini/Desktop/ENGLISH WEBSITE/`
-**Key file:** `index.html` — single-file vanilla JS app, ~204K chars
-**Roadmap/plan:** `nimbalyst-local/plans/english-mastery-roadmap.md` (local, gitignored) — 7-milestone plan; M1 done, M2 (Lesson 5) next
+**Key file:** `index.html` — single-file vanilla JS app, ~212K chars
+**Roadmap/plan:** `nimbalyst-local/plans/english-mastery-roadmap.md` (local, gitignored) — 7-milestone plan. Current state in "Roadmap status" + "Next up (start here)" below.
 
 ---
 
@@ -19,7 +19,7 @@ Mohammad — Kuwaiti, English Masters from Penn State (Rochester, 2017–2019), 
 - **Publishable key:** `sb_publishable_vyCD7qOBTheSMhM6fgXeLw_me3ViUg6`
 - **Table:** `progress(user_id text PK, data jsonb, updated_at timestamptz)`
 - **Auth:** passphrase stored in `localStorage` key `em_passphrase`
-- **localStorage key:** `em_full_v1` → `{xp, completed[], actDone{}, retryCount{}, mastery{}, streak, bestStreak, lastStudyDay, dailyXP{date,xp}, goalXP, studySeconds{total,today,day}}`
+- **localStorage key:** `em_full_v1` → `{xp, completed[], actDone{}, retryCount{}, mastery{}, streak, bestStreak, lastStudyDay, dailyXP{date,xp}, goalXP, studySeconds{total,today,day}, qpool{"lid_act":{order,pos}}, exam{"p<i>":{best,passed}}}`
 
 ---
 
@@ -46,7 +46,7 @@ Overview, Flashcards, MCQ Quiz (6 q), Fill in Blank (5 q), Match Pairs, Tap Word
 A lesson is "complete" when all 5 graded activities (mcq, fill, match, tap, **err**) are done → +50 XP
 
 ### Sub-lessons (drill-down from Overview tab)
-Each of the 4 active lessons has 3–4 sub-lessons with:
+The Overview is now a teach-first **Learn page** (see architecture notes); sub-lessons render below it as "deep dives". Each of the 5 active lessons has 3–4 sub-lessons with:
 - Detailed explanation (key concept cards + rule box)
 - 4-question MCQ quiz (+8 XP)
 - 4-question fill-in-blank (+8 XP)
@@ -126,18 +126,22 @@ Dark mode via `[data-theme="dark"]` on `<html>`. Theme stored in `localStorage('
 - `git` ✅, `brew` ✅, `gh` ✅ (authenticated as `m3amazon-cmyk`)
 - GitHub Pages auto-deploys on push to `main`
 - No Node/npm needed (plain HTML)
-- Use `Edit` tool (not `Write`) for changes — file is large (~204K chars)
+- Use `Edit` tool (not `Write`) for changes — file is large (~212K chars)
 - **No Node** — to syntax-check JS: extract the inline `<script>` and run `osascript -l JavaScript` with `new Function(code)`. To visually verify: build a seeded copy (stub Supabase + preset `localStorage`) and screenshot via headless Chrome (`/Applications/Google Chrome.app/Contents/MacOS/Google Chrome --headless=new --screenshot`).
 - Use `mcp__nimbalyst-mcp__developer_git_commit_proposal` or standard git for commits
 
 ---
 
 ## Git state
-Branch: `main`. All changes committed and pushed (M1 consistency layer shipped 2026-06-06). Recent commits:
-- `0696e1c` Add completion percentages to lessons, sub-lessons, and activity tabs
-- `04a0726` Add 14 sub-lessons with in-depth explanations and exercises
-- `1e7dd47` Add sidebar, level system, mastery tracking, Error Fix tab, and Lesson 4
-- `efcdea3` Add more question sets to all lesson banks for retry variety
+Branch: `main`. All changes committed and pushed. Recent commits (newest first):
+- `c6a2f91` teach-first Learn overview on every lesson
+- `9c6db21` 50-question phase exams with 3 fresh attempts
+- `d3c84ae` graded phase final exams
+- `bd70790` cumulative Comprehension quiz per lesson
+- `23c7e76` stop repeating questions on activity retries
+- `96e6300` bigger question text with highlighted keywords
+- `c3cc5c5` Lesson 5 (Phrases) with sub-lessons and activities
+- `f0645b2` daily streak, goal ring, countdown, study timer (M1)
 
 ---
 
@@ -149,6 +153,26 @@ See `nimbalyst-local/plans/english-mastery-roadmap.md` for the full 7-milestone 
 - 🔧 **M2 — Phase 2 content (Lessons 5–8)** — ✅ Lesson 5 (Phrases) shipped; Lessons 6–8 (clauses, sentencetypes, punctuation) pending review
 - M3 Phase 3 (9–12) · M4 Phase 4 (13–15) · M5 Teacher Mode · M6 Review/retention · M7 Polish
 - 🆕 **User review (2026-06-10):** ✅ retry-repeat fix · ✅ cumulative Comprehension quiz · ✅ phase final exams (graded, pass 80%, 🏅 badge; gate on all phase lessons authored) · ✅ bigger highlighted question text · ✅ teach-first Learn overview on every lesson (intro, table, memory hook, watch-out, teaching tip, takeaways, self-check). Queued in order: create-your-own-sentences (self-check), Lessons 6–8, mistake log, weak-spots review, Teacher Mode.
+
+---
+
+## Next up (start here) — Create-your-own-sentences (#3)
+Locked design (decided with Mohammad):
+- A **writing activity**: give a task (e.g. "Write a sentence using a prepositional phrase as an adverb"), user types a sentence.
+- **Self-check** model: reveal a **model answer + a short checklist** of what to include; user self-rates (nailed it / review). No auto grammar-grading (static site, no backend AI — that's a possible later upgrade via a serverless function).
+- **Save the user's sentences** to `localStorage` as a reusable personal **example bank** (doubles as classroom examples for his teaching).
+- Award XP on completion. Add as a new activity tab (e.g. `✍️ Write`) wired into `TABS`/`showAct`/`rerender`, or a per-lesson section; reuse `.qwrap`/`.card` styles. Author per-lesson prompts (like `LEARN`/`EXAM_EXTRA`, attach via a loop).
+
+Then the rest of the queue, in order:
+1. **Lessons 6–8 content** (Clauses, Sentence Types, Punctuation) — unlocks the Phase 2 final exam. Follow the Lesson-5 pattern: `LD` entry + `SLD` sub-lessons + `LEARN` entry + unlock in `PHASES` + `LD.x.sublessons=SLD.x`. Keep `err` banks generous and add to `EXAM_EXTRA` so pools stay deep.
+2. **Mistake log** — auto-save wrong answers, "review my misses" session.
+3. **Weak-spots auto-review** — drill lowest-mastery activities.
+4. **Teacher Mode** — per-lesson tab: common student errors + plain-English explanation scripts + classroom examples (expands on the per-lesson Teaching tip).
+
+## Working style with Mohammad (important)
+- For each feature: briefly propose the design, confirm choices with an interactive prompt, **build**, **screenshot to verify** (headless-Chrome workflow under Environment), then **commit + push** (auto-deploys). He likes seeing the result and shipping each piece.
+- Content is **co-authored**: draft strong defaults, personalize (Mohammad / Kuwait University / Penn State / Rochester), and flag where his own examples would add most value.
+- He prefers **concise, scannable** content over long paragraphs (a few short paragraphs are fine), with **bold/highlighted keywords**.
 
 ## Suggested next features (original brainstorm — superseded by the roadmap above)
 
@@ -170,6 +194,6 @@ See `nimbalyst-local/plans/english-mastery-roadmap.md` for the full 7-milestone 
 ---
 
 ## First actions in new session
-1. Read this file
-2. Read `index.html` (or grep for specific functions as needed)
-3. Implement the requested feature
+1. Read this file.
+2. Explore `index.html` by **grepping** for specific functions/sections — it is ~212K chars, so don't read it whole.
+3. Build the next queued item (see **"Next up (start here)"**), following the **Working style** above: confirm design → build → screenshot-verify → commit + push. Quick-confirm with Mohammad first if a design choice is open.
