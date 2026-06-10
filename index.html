@@ -83,6 +83,20 @@ html,body{height:100%;background:var(--bg);font-family:'Plus Jakarta Sans',sans-
 .exam-go{font-size:20px;font-weight:800;opacity:.9;}
 .exam-q-meta{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);font-weight:600;margin-bottom:10px;}
 .exam-review-item{background:var(--white);border-radius:var(--r-sm);padding:12px;margin-bottom:8px;box-shadow:var(--shadow);border-left:4px solid var(--red);}
+.learn-h{font-size:13px;font-weight:700;color:var(--primary-dark);margin:16px 0 8px;padding-left:2px;}
+.callout{border-radius:var(--r-sm);padding:11px 14px;margin-bottom:12px;border-left:4px solid;font-size:13px;line-height:1.65;color:var(--text);}
+.callout-t{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;}
+.callout.hook{background:var(--purple-light);border-color:var(--purple);}
+.callout.hook .callout-t{color:var(--purple);}
+.callout.watch{background:var(--red-light);border-color:var(--red);}
+.callout.watch .callout-t{color:var(--red-dark);}
+.callout.tip{background:var(--primary-light);border-color:var(--primary);}
+.callout.tip .callout-t{color:var(--primary-dark);}
+.takeaway-box{background:var(--green-light);border-radius:var(--r-sm);padding:11px 14px;margin-bottom:12px;}
+.takeaway-box .callout-t{color:var(--green-dark);margin-bottom:6px;}
+.takeaway-box ul{margin:0;padding-left:18px;}
+.takeaway-box li{font-size:13px;line-height:1.6;color:var(--text);margin-bottom:4px;}
+.selfcheck{background:var(--surface);border-radius:var(--r-sm);padding:14px;margin-bottom:14px;}
 .lessons-grid{display:grid;gap:8px;margin-bottom:4px;}
 @media(min-width:769px){.lessons-grid{grid-template-columns:1fr 1fr;}}
 .err-sent-box{background:var(--red-light);border:2px solid var(--red);border-radius:var(--r-sm);padding:14px;margin-bottom:12px;font-size:13.5px;font-weight:500;line-height:1.7;color:var(--red-dark);}
@@ -1111,6 +1125,56 @@ const EXAM_EXTRA={
 };
 Object.keys(EXAM_EXTRA).forEach(function(k){if(LD[k]){if(EXAM_EXTRA[k].mcq)LD[k].mcqBank=(LD[k].mcqBank||[]).concat(EXAM_EXTRA[k].mcq);if(EXAM_EXTRA[k].err)LD[k].errBank=(LD[k].errBank||[]).concat(EXAM_EXTRA[k].err);}});
 
+// ── Teach-first "Learn" content for each lesson overview ──
+const LEARN={
+  pos:{
+    intro:'<strong>Every word</strong> in English does one of <strong>eight jobs</strong>. Naming that job — its part of speech — is the first step to reading any sentence with confidence.<br><br>The key idea: a word’s part of speech depends on <strong>how it is used</strong>, not on the word itself. <em>Book</em> is a noun in <em>read a book</em> but a verb in <em>book a flight</em>. Always look at the job the word does.',
+    table:{head:["Part","Its job","Example"],rows:[["Noun","Names a person, place, thing, or idea","teacher, Kuwait, freedom"],["Pronoun","Replaces a noun","he, she, they, it"],["Verb","An action or state","teach, run, is"],["Adjective","Describes a noun","brilliant, cold, ancient"],["Adverb","Modifies a verb, adjective, or adverb","quickly, very, often"],["Preposition","Shows a relationship","in, on, at, for"],["Conjunction","Connects words or clauses","and, but, or, so"],["Interjection","Expresses emotion","Wow, Oops, Oh"]]},
+    hook:"Recall the connectors with FANBOYS — the seven coordinating conjunctions: For, And, Nor, But, Or, Yet, So.",
+    watch:"After a verb, use an adverb, not an adjective: she sings beautifully, not she sings beautiful. The -ly ending is usually the clue.",
+    tips:"Have students label the job of each word in a real sentence instead of memorizing lists. The moment a learner sees the same word change roles — book a flight versus read a book — the idea clicks.",
+    takeaways:["A word’s part of speech comes from its job in the sentence, not the word alone.","Adjectives describe nouns; adverbs modify verbs, adjectives, and other adverbs.","Prepositions show relationships, conjunctions connect, and interjections stand alone.","FANBOYS names the seven coordinating conjunctions."],
+    check:{q:'In "She booked a flight," what part of speech is "booked"?',opts:["Noun","Verb","Adjective","Adverb"],ans:1,exp:'Here "booked" is the action, so it is a verb — even though "book" is a noun in other sentences.'}
+  },
+  articles:{
+    intro:'Articles are the small words <strong>a, an, the</strong> that tell your listener whether a noun is <strong>specific</strong> or <strong>general</strong>. Tiny as they are, they are a big part of what makes English sound natural.<br><br>The golden rule is <strong>sound, not spelling</strong>: use <em>an</em> before a vowel sound (an hour, an MBA) and <em>a</em> before a consonant sound (a university, a one-way street).',
+    table:{head:["Choice","When to use it","Example"],rows:[["the","Specific — both of you know which one","Pass me the book."],["a","General, before a consonant sound","I need a pen."],["an","General, before a vowel sound","She is an engineer."],["no article","Proper nouns, general plurals, uncountables","Kuwait is hot. Dogs are loyal."]]},
+    hook:"Sound, not spelling. Say the next word aloud: a vowel sound takes an (an honest man); a consonant sound takes a (a university).",
+    watch:"Uncountable nouns such as advice, information, and furniture take no a or an and have no plural form: useful advice, never a useful advice.",
+    tips:"Drill the sound rule with the pairs learners trip on — an hour versus a university, an MBA versus a European. Reading them aloud beats any written rule, because the ear already knows the answer.",
+    takeaways:["the = specific and known; a and an = general.","Pick a or an by the sound that follows, not the letter.","Proper nouns, general plurals, and uncountables usually take no article.","Superlatives and one-of-a-kind nouns take the: the best, the sun."],
+    check:{q:'Which one is correct?',opts:["She has a MBA.","She has an MBA.","She has the MBA.","She has MBA."],ans:1,exp:'"MBA" begins with the vowel sound em, so it takes "an."'}
+  },
+  tenses:{
+    intro:'English builds its <strong>twelve tenses</strong> from just two ingredients: <strong>time</strong> (past, present, future) and <strong>aspect</strong> (simple, continuous, perfect, perfect continuous).<br><br>Hold on to three ideas: <strong>simple</strong> states a fact, <strong>continuous</strong> shows something in progress, and <strong>perfect</strong> links one time to another. Combine a time with an aspect and any tense falls into place.',
+    table:{head:["Aspect","What it shows","Example (present)"],rows:[["Simple","A fact or habit","She teaches."],["Continuous","In progress right now","She is teaching."],["Perfect","Linked to another time","She has taught."],["Perfect continuous","How long, up to now","She has been teaching."]]},
+    hook:"Let the signal word pick the tense: since and for point to the perfect; yesterday and last year point to the past simple; when plus an interruption points to the past continuous; by plus a future time points to the future perfect.",
+    watch:"Stative verbs — know, believe, understand, love, own — describe states, not actions, so they avoid the continuous: I understand, never I am understanding.",
+    tips:"Draw a simple timeline and have students place since, yesterday, and by next year on it. Once the words have a position in time, the difference between the perfect and the simple stops feeling abstract.",
+    takeaways:["Every tense is a time plus an aspect.","Simple is a fact, continuous is in progress, perfect connects to another time.","Signal words reliably point to the right tense.","Stative verbs do not take continuous forms."],
+    check:{q:'"I ___ here since 2019." Which is correct?',opts:["live","lived","have lived","am living"],ans:2,exp:'"Since" links the past to now, so use the present perfect "have lived."'}
+  },
+  agreement:{
+    intro:'Subject-verb agreement simply means the <strong>verb matches its subject in number</strong>: a singular subject takes a singular verb, and a plural subject takes a plural verb.<br><br>Almost every mistake comes from <strong>losing the real subject</strong> — usually because a phrase sits between it and the verb. Find the true subject first, and the rest is easy.',
+    table:{head:["Subject","Verb","Example"],rows:[["Singular (he, she, it)","singular","She teaches."],["Plural (they)","plural","They teach."],["each, every, everyone","singular","Everyone is here."],["both, many, few","plural","Both are ready."],["collective (team) — American English","singular","The team is winning."]]},
+    hook:"Cover up the words between the subject and the verb. In the box of books IS heavy, the subject is box, not books.",
+    watch:"The indefinite pronouns each, every, everyone, everybody, and neither are always singular: everyone has a book, not everyone have a book.",
+    tips:"Teach students to cross out any phrase that falls between the subject and the verb before they choose the verb. Removing the prepositional phrase makes the true subject obvious almost every time.",
+    takeaways:["Match the verb to the real subject’s number.","Phrases between the subject and verb never change agreement — ignore them.","each, every, everyone, and neither are singular; both, many, and few are plural.","Collective nouns take a singular verb in American English."],
+    check:{q:'Choose: "The list of names ___ on the desk."',opts:["are","is","were","have"],ans:1,exp:'The subject is "list" (singular); ignore "of names." Use "is."'}
+  },
+  phrases:{
+    intro:'A <strong>phrase</strong> is a group of words that works together as a single unit but has <strong>no subject-verb pair</strong> of its own. Phrases are the chunks you slot together to build clauses and sentences.<br><br>Name a phrase by its <strong>head word</strong>: a noun phrase is built around a noun, a verb phrase around a verb, and so on.',
+    table:{head:["Phrase","Built around","Example"],rows:[["Noun phrase","a noun","the talented teacher"],["Verb phrase","a verb","has been teaching"],["Adjective phrase","an adjective","proud of her work"],["Adverb phrase","an adverb","very carefully"],["Prepositional phrase","a preposition","in the classroom"]]},
+    hook:"No subject and verb working together means it is a phrase. Add a subject doing a verb and it becomes a clause: in the morning is a phrase; because she teaches is a clause.",
+    watch:"Keep a prepositional phrase next to what it describes, or the meaning drifts: she served sandwiches on paper plates to the students reads more clearly than the reverse order.",
+    tips:"Ask students to bracket and label each phrase in a long sentence by its head word. Seeing a sentence as a few labeled chunks, rather than a row of separate words, is what makes complex grammar feel manageable.",
+    takeaways:["A phrase is a unit of words with no subject-verb pair.","Name a phrase by its head word: noun, verb, adjective, adverb, or preposition.","A prepositional phrase works as an adjective or an adverb.","Keep a modifying phrase close to the word it modifies."],
+    check:{q:'What kind of phrase is "in the lecture hall"?',opts:["Noun phrase","Verb phrase","Prepositional phrase","Adjective phrase"],ans:2,exp:'It opens with the preposition "in" and its object, so it is a prepositional phrase.'}
+  }
+};
+Object.keys(LEARN).forEach(function(k){if(LD[k])LD[k].learn=LEARN[k];});
+
 let DS={};
 function dsk(l,a){return l+"_"+a;}
 function ds(l,a){const k=dsk(l,a);if(!DS[k]){const att=getRC(l,a);DS[k]={qi:0,ans:false,sel:null,tapped:[],fv:"",roAns:[],roShuf:null,mSel:null,mDone:{},mShuf:null,score:0,done:false,fi:0,ff:false,fb:null,att,qs:null};}return DS[k];}
@@ -1132,10 +1196,25 @@ function rerender(lid,act){const p=document.getElementById("panels");if(!p)retur
 function switchAct(lid,act){curA=act;buildTabs(lid);showAct(lid,act);}
 
 function renderOV(d,lid){
-  let h=`<div class="card"><div class="intro-tag">${d.intro.tag}</div><div class="intro-h">${d.intro.h}</div><div class="intro-desc">${d.intro.desc}</div></div>`;
-  // Sub-lesson cards
+  const L=d.learn;
+  window.__lc=(L&&L.check)?L.check:null;
+  let h=`<div class="card"><div class="intro-tag">${d.intro.tag}</div><div class="intro-h">${d.intro.h}</div><div class="intro-desc">${L&&L.intro?L.intro:d.intro.desc}</div></div>`;
+  // Key concepts
+  h+=`<div class="learn-h">🧱 Key concepts</div>`;
+  h+=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:8px;margin-bottom:14px">${d.defs.map(x=>`<div style="background:var(--white);border-radius:var(--r-sm);padding:12px;box-shadow:var(--shadow);border:1px solid var(--border)"><div style="font-size:18px;margin-bottom:5px">${x.icon}</div><div style="font-size:12px;font-weight:700;margin-bottom:2px">${x.t}</div><div style="font-size:11px;color:var(--muted);line-height:1.55;margin-bottom:2px">${hl(x.d)}</div><div style="font-size:11.5px;color:var(--muted);font-style:italic;font-weight:600">${hl(x.e)}</div></div>`).join("")}</div>`;
+  if(L){
+    if(L.table)h+=`<div class="learn-h">📊 At a glance</div>`+tableHTML(L.table);
+    if(L.hook)h+=callout("hook","🧠 Memory hook",L.hook);
+    if(L.watch)h+=callout("watch","⚠️ Watch out",L.watch);
+    if(L.tips)h+=callout("tip","👩‍🏫 Teaching tip",L.tips);
+    if(L.takeaways&&L.takeaways.length)h+=`<div class="takeaway-box"><div class="callout-t">✅ Key takeaways</div><ul>${L.takeaways.map(t=>`<li>${hl(t)}</li>`).join("")}</ul></div>`;
+    if(L.check){const c=L.check;h+=`<div class="selfcheck"><div class="callout-t" style="color:var(--primary-dark)">✏️ Quick check</div><div style="font-size:14px;font-weight:600;margin:4px 0 8px;color:var(--text)">${hl(c.q)}</div><div class="mcq-opts" id="lc-opts">${c.opts.map((o,i)=>`<div class="mcq-opt" onclick="lcPick(${i})"><div class="opt-key">${String.fromCharCode(65+i)}</div>${o}</div>`).join("")}</div><div id="lc-exp" style="display:none;margin-top:10px"></div></div>`;}
+  } else if(d.rule){
+    h+=`<div class="rule-box"><div class="rule-t">${d.rule.t}</div><div class="rule-b">${d.rule.b}</div></div>`;
+  }
+  // Sub-lessons (deep dives)
   if(d.sublessons&&d.sublessons.length){
-    h+=`<div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">📚 Sub-lessons — deep dives</div>`;
+    h+=`<div class="learn-h">📚 Sub-lessons — deep dives</div>`;
     h+=`<div class="sl-grid">`;
     d.sublessons.forEach(sl=>{
       const sc=subCompletion(sl.id);
@@ -1156,11 +1235,12 @@ function renderOV(d,lid){
     });
     h+=`</div><div style="height:4px"></div>`;
   }
-  if(d.rule)h+=`<div class="rule-box"><div class="rule-t">${d.rule.t}</div><div class="rule-b">${d.rule.b}</div></div>`;
-  h+=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:8px;margin-bottom:14px">${d.defs.map(x=>`<div style="background:var(--white);border-radius:var(--r-sm);padding:12px;box-shadow:var(--shadow);border:1px solid var(--border)"><div style="font-size:18px;margin-bottom:5px">${x.icon}</div><div style="font-size:12px;font-weight:700;margin-bottom:2px">${x.t}</div><div style="font-size:11px;color:var(--muted);line-height:1.55;margin-bottom:2px">${hl(x.d)}</div><div style="font-size:11.5px;color:var(--muted);font-style:italic;font-weight:600">${hl(x.e)}</div></div>`).join("")}</div>`;
   h+=`<button class="btn primary" style="width:100%;margin-bottom:14px" onclick="switchAct('${lid}','flashcards')">Start full activities →</button>`;
   return h;
 }
+function callout(type,title,body){return `<div class="callout ${type}"><div class="callout-t">${title}</div><div>${hl(body)}</div></div>`;}
+function tableHTML(t){let h='<table class="exp-table"><thead><tr>'+t.head.map(x=>`<th>${x}</th>`).join("")+'</tr></thead><tbody>';t.rows.forEach(r=>{h+='<tr>'+r.map(c=>`<td>${hl(c)}</td>`).join("")+'</tr>';});return h+'</tbody></table>';}
+function lcPick(i){const c=window.__lc;if(!c)return;document.querySelectorAll('#lc-opts .mcq-opt').forEach((el,k)=>{el.style.pointerEvents='none';if(k===c.ans)el.classList.add('correct');else if(k===i)el.classList.add('wrong');});const ex=document.getElementById('lc-exp');if(ex){ex.style.display='';ex.className='fb '+(i===c.ans?'fb-ok':'fb-bad');ex.innerHTML='<div class="fb-icon">'+(i===c.ans?'✅':'❌')+'</div><div>'+hl(c.exp)+'</div>';}}
 
 function renderFC(lid,el){const d=ds(lid,"flashcards");if(!d.qs){d.qs=shuffle(LD[lid].fc);}const cards=d.qs;const i=d.fi,c=cards[i],fl=d.ff;el.innerHTML=`<div class="qwrap"><div class="qwrap-top"><div class="qwrap-title">🃏 Flashcards</div><div class="qright"><div class="qcounter">${i+1}/${cards.length}</div></div></div><div class="qprog"><div class="qprog-fill" style="width:${((i+1)/cards.length)*100}%"></div></div><p class="q-text">Tap the card to reveal the definition.</p><div class="fc-scene"><div class="fc-card${fl?" flipped":""}" id="fc" onclick="fcFlip('${lid}')"><div class="fc-face fc-front"><div class="fc-hint">${c.h}</div><div class="fc-word">${c.f}</div><div class="fc-tap">Tap to reveal →</div></div><div class="fc-face fc-back"><div class="fc-hint">Usage</div><div class="fc-def">${hl(c.b)}</div><div class="fc-ex">${hl(c.e)}</div></div></div></div><div class="fc-nav"><button class="fc-arrow" onclick="fcPrev('${lid}')" ${i===0?"disabled":""}>←</button><div class="fc-dots">${cards.map((_,j)=>`<div class="fc-dot${j===i?" on":""}"></div>`).join("")}</div><button class="fc-arrow" onclick="fcNext('${lid}')" ${i===cards.length-1?"disabled":""}>→</button></div>${i===cards.length-1?`<button class="btn primary" style="width:100%" onclick="switchAct('${lid}','mcq')">Next: quiz →</button>`:""}</div>`;}
 function fcFlip(lid){const d=ds(lid,"flashcards");d.ff=!d.ff;rerender(lid,"flashcards");}
