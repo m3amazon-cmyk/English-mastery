@@ -1015,7 +1015,11 @@ let DS={};
 function dsk(l,a){return l+"_"+a;}
 function ds(l,a){const k=dsk(l,a);if(!DS[k]){const att=getRC(l,a);DS[k]={qi:0,ans:false,sel:null,tapped:[],fv:"",roAns:[],roShuf:null,mSel:null,mDone:{},mShuf:null,score:0,done:false,fi:0,ff:false,fb:null,att,qs:null};}return DS[k];}
 function resetDS(l,a){incRC(l,a);delete DS[dsk(l,a)];}
-function getQs(l,a){const d=ds(l,a);if(d.qs)return d.qs;const les=LD[l];const att=d.att;let qs;if(a==="mcq"){const bank=les.mcqBank||[];qs=pickSet(shuffle(bank),Math.min(6,bank.length),att);}else if(a==="fill"){const bank=les.fillBank||[];qs=pickSet(shuffle(bank),Math.min(5,bank.length),att);}else if(a==="match")qs=[les.matchBank[att%les.matchBank.length]];else if(a==="tap")qs=pickSet(shuffle(les.tapBank),4,att);else if(a==="err")qs=pickSet(shuffle(les.errBank),6,att);d.qs=qs;return qs;}
+function shuffleIdx(n){const a=[];for(let i=0;i<n;i++)a.push(i);return shuffle(a);}
+// Persistent shuffled queue per lesson+activity: serves the NEXT unseen questions
+// each attempt and only reshuffles once the whole bank has been used (no repeats until then).
+function drawQ(key,len,n){if(len<=0)return[];if(!ST.qpool)ST.qpool={};let p=ST.qpool[key];if(!p||!p.order||p.order.length!==len)p={order:shuffleIdx(len),pos:0};if(p.pos+n>p.order.length)p={order:shuffleIdx(len),pos:0};const idx=p.order.slice(p.pos,p.pos+n);p.pos+=n;ST.qpool[key]=p;saveLocal();return idx;}
+function getQs(l,a){const d=ds(l,a);if(d.qs)return d.qs;const les=LD[l];let qs;if(a==="mcq"){const bank=les.mcqBank||[];qs=drawQ(l+"_mcq",bank.length,Math.min(6,bank.length)).map(i=>bank[i]);}else if(a==="fill"){const bank=les.fillBank||[];qs=drawQ(l+"_fill",bank.length,Math.min(5,bank.length)).map(i=>bank[i]);}else if(a==="match"){const bank=les.matchBank||[];qs=drawQ(l+"_match",bank.length,1).map(i=>bank[i]);}else if(a==="tap"){const bank=les.tapBank||[];qs=drawQ(l+"_tap",bank.length,Math.min(4,bank.length)).map(i=>bank[i]);}else if(a==="err"){const bank=les.errBank||[];qs=drawQ(l+"_err",bank.length,Math.min(6,bank.length)).map(i=>bank[i]);}d.qs=qs;return qs;}
 
 let curL=null,curA="overview";
 function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");}

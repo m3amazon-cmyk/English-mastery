@@ -103,6 +103,7 @@ const LEVELS=[
 - `ds(lid, act)` / `getQs(lid, act)` / `resetDS(lid, act)` work for both lessons and sub-lessons
 - `curL` = current lesson id; `curSL` = current sub-lesson id
 - `hl(text)` auto-highlights grammar terms + ALL-CAPS words (bold blue `.hl`) in questions, tasks, fill sentences, explanations, flashcards, and concept cards — applied at render time, so authored content stays plain text (no manual markup needed)
+- `getQs` serves questions via `drawQ`/`ST.qpool` (persistent shuffled queue per lesson+activity) — no repeats until the bank cycles. To increase retry variety, enlarge the banks; note `err` banks (6) show all 6, so they need more items for truly fresh retries.
 - Navigation: `goHome()` / `openLesson(lid)` / `openSubLesson(lid, slid)` / `closeSubLesson()`
 
 ---
