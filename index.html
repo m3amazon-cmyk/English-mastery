@@ -1034,6 +1034,83 @@ LD.tenses.sublessons=SLD.tenses;
 LD.agreement.sublessons=SLD.agreement;
 LD.phrases.sublessons=SLD.phrases;
 
+// ── Supplemental question banks: deepen the pool so phase exams give 50 questions × 3 fresh attempts ──
+const EXAM_EXTRA={
+  pos:{mcq:[
+    {q:'What part of speech is "swiftly" in "The deadline approached swiftly"?',opts:["Adjective","Adverb","Verb","Noun"],ans:1,exp:'"Swiftly" modifies the verb "approached," so it is an adverb.'},
+    {q:'In "Neither the teacher nor the students were ready," what is "neither"?',opts:["Conjunction","Pronoun","Adverb","Preposition"],ans:0,exp:'"Neither...nor" is a correlative conjunction joining two elements.'},
+    {q:'Identify the pronoun: "The committee announced its decision."',opts:["committee","announced","its","decision"],ans:2,exp:'"Its" is a possessive pronoun standing in for the committee.'},
+    {q:'What part of speech is "ouch" in "Ouch, that hurt!"?',opts:["Adverb","Interjection","Verb","Noun"],ans:1,exp:'"Ouch" expresses sudden feeling and stands apart grammatically — an interjection.'},
+    {q:'In "She works at the university," what part of speech is "at"?',opts:["Adverb","Conjunction","Preposition","Pronoun"],ans:2,exp:'"At" shows the relationship between "works" and "the university" — a preposition.'},
+    {q:'What part of speech is "ancient" in "They studied ancient manuscripts"?',opts:["Noun","Adjective","Adverb","Verb"],ans:1,exp:'"Ancient" describes the noun "manuscripts" — an adjective.'},
+    {q:'Which word is the verb in "The lecture inspired the whole class"?',opts:["lecture","inspired","whole","class"],ans:1,exp:'"Inspired" is the action — the verb.'},
+    {q:'In "He spoke softly yet firmly," what part of speech is "yet"?',opts:["Adverb","Preposition","Conjunction","Interjection"],ans:2,exp:'"Yet" joins two adverbs as a coordinating conjunction.'},
+    {q:'What part of speech is "themselves" in "The students taught themselves"?',opts:["Pronoun","Noun","Adjective","Adverb"],ans:0,exp:'"Themselves" is a reflexive pronoun referring back to the subject.'},
+    {q:'Identify the adverb: "She almost finished the exam."',opts:["She","almost","finished","exam"],ans:1,exp:'"Almost" modifies the verb "finished," telling to what extent — an adverb.'},
+    {q:'What part of speech is "freedom" in "They fought for freedom"?',opts:["Verb","Adjective","Noun","Adverb"],ans:2,exp:'"Freedom" is an abstract noun naming an idea.'},
+    {q:'In "She and I revised together," what part of speech is "and"?',opts:["Preposition","Conjunction","Pronoun","Adverb"],ans:1,exp:'"And" joins two subject pronouns — a coordinating conjunction.'}
+  ],err:[
+    {wrong:"She sang beautiful at the concert.",opts:["She sang beautiful at the concert.","She sang beautifully at the concert.","She sang beautifuly at the concert.","She sang more beautiful at the concert."],ans:1,exp:'A verb is modified by an adverb: "beautifully," not the adjective "beautiful."'},
+    {wrong:"Him and his colleague wrote the report.",opts:["He and his colleague wrote the report.","Him and his colleague wrote the report.","Him and his colleague writes the report.","He and him wrote the report."],ans:0,exp:'A subject needs a subject pronoun: "He," not "Him."'},
+    {wrong:"There teacher explained the rule clearly.",opts:["There teacher explained the rule clearly.","Their teacher explained the rule clearly.","They're teacher explained the rule clearly.","Theyre teacher explained the rule clearly."],ans:1,exp:'Use the possessive "their," not "there" (place) or "they\'re" (they are).'},
+    {wrong:"The childrens books are on the shelf.",opts:["The childrens books are on the shelf.","The children's books are on the shelf.","The childrens' books are on the shelf.","The childs books are on the shelf."],ans:1,exp:'"Children" is already plural, so the possessive is "children\'s."'}
+  ]},
+  articles:{mcq:[
+    {q:'___ honesty of her answer impressed the panel.',opts:["A","An","The","No article"],ans:2,exp:'A specific honesty modified by a phrase takes "the."'},
+    {q:'He bought ___ used car last week.',opts:["a","an","the","no article"],ans:0,exp:'"Used" begins with a "y" consonant sound ("yoozd") — use "a."'},
+    {q:'She is ___ honest and hardworking student.',opts:["a","an","the","no article"],ans:1,exp:'"Honest" has a silent H — a vowel sound — so "an."'},
+    {q:'We talked for ___ hour and a half.',opts:["a","an","the","no article"],ans:1,exp:'"Hour" has a silent H — vowel sound — use "an."'},
+    {q:'___ love is a powerful motivator.',opts:["A","An","The","No article"],ans:3,exp:'Abstract noun used in general — no article.'},
+    {q:'Could you turn on ___ air conditioning, please?',opts:["a","an","the","no article"],ans:2,exp:'A specific, shared piece of context takes "the."'},
+    {q:'They climbed ___ Mount Everest last year.',opts:["a","an","the","no article"],ans:3,exp:'Names of single mountains take no article (cf. "the Alps" for ranges).'},
+    {q:'She plays ___ violin in the university orchestra.',opts:["a","an","the","no article"],ans:2,exp:'Musical instruments take "the": the violin.'},
+    {q:'He is ___ European professor visiting Kuwait.',opts:["a","an","the","no article"],ans:0,exp:'"European" starts with a "y" consonant sound — use "a."'},
+    {q:'We need ___ information before deciding.',opts:["a","an","the","no article"],ans:3,exp:'"Information" is uncountable and general here — no article.'}
+  ],err:[
+    {wrong:"She is the most kindest teacher I know.",opts:["She is the most kindest teacher I know.","She is the kindest teacher I know.","She is most kindest teacher I know.","She is the more kindest teacher I know."],ans:1,exp:'Do not combine "most" with a "-est" superlative. Use "the kindest."'},
+    {wrong:"I had a egg and an toast for breakfast.",opts:["I had a egg and an toast for breakfast.","I had an egg and toast for breakfast.","I had an egg and a toast for breakfast.","I had a egg and toast for breakfast."],ans:1,exp:'"An egg" (vowel sound); "toast" is uncountable here, so no article.'},
+    {wrong:"The Mount Everest is the tallest mountain.",opts:["The Mount Everest is the tallest mountain.","Mount Everest is the tallest mountain.","A Mount Everest is the tallest mountain.","An Mount Everest is the tallest mountain."],ans:1,exp:'Single mountain names take no article: "Mount Everest."'},
+    {wrong:"He gave me an useful advice.",opts:["He gave me an useful advice.","He gave me useful advice.","He gave me a useful advice.","He gave me the useful advices."],ans:1,exp:'"Advice" is uncountable (no a/an, no plural); "useful" has a "y" sound anyway.'}
+  ]},
+  tenses:{mcq:[
+    {q:'Which sentence is in the Present Perfect?',opts:["She teaches every morning.","She has taught here since 2020.","She was teaching at noon.","She will teach tomorrow."],ans:1,exp:'"Has taught" = has + past participle = Present Perfect.'},
+    {q:'"While I ___ , the lights went out." Choose the best form.',opts:["read","was reading","have read","will read"],ans:1,exp:'Past Continuous "was reading" sets a background action interrupted by another past event.'},
+    {q:'"By 2030, she ___ for two decades." Choose the correct tense.',opts:["teaches","will have taught","has taught","is teaching"],ans:1,exp:'Future Perfect "will have taught" — completed before a future point.'},
+    {q:'Which signal word goes with the Past Simple?',opts:["since","already","yesterday","yet"],ans:2,exp:'"Yesterday" marks a finished past time — Past Simple.'},
+    {q:'"I ___ this book three times." Choose the correct form.',opts:["read","have read","was reading","am reading"],ans:1,exp:'Present Perfect "have read" — past experience relevant now, exact time unspecified.'},
+    {q:'Identify the tense: "They had left before we arrived."',opts:["Past Simple","Past Perfect","Present Perfect","Past Continuous"],ans:1,exp:'"Had left" before another past action = Past Perfect.'},
+    {q:'Which sentence uses a stative verb correctly?',opts:["I am knowing the answer.","I am understanding now.","I believe you are right.","She is owning two cars."],ans:2,exp:'Stative verbs (believe, know, own) avoid continuous forms: "I believe."'},
+    {q:'"Look at those clouds — it ___ rain." Best choice?',opts:["will","is going to","rains","has rained"],ans:1,exp:'An evidence-based prediction uses "going to."'},
+    {q:'Choose the correct form: "She ___ when I called."',opts:["studies","studied","was studying","has studied"],ans:2,exp:'Past Continuous "was studying" — in progress when the call interrupted it.'},
+    {q:'Which sentence is in the Present Perfect Continuous?',opts:["She has taught for years.","She has been teaching all day.","She was teaching all day.","She teaches all day."],ans:1,exp:'"Has been teaching" = has been + -ing = Present Perfect Continuous, stressing duration.'}
+  ],err:[
+    {wrong:"I have seen him yesterday at the library.",opts:["I have seen him yesterday at the library.","I saw him yesterday at the library.","I had seen him yesterday at the library.","I have saw him yesterday at the library."],ans:1,exp:'"Yesterday" needs the Past Simple "saw," not the Present Perfect.'},
+    {wrong:"She is knowing the answer already.",opts:["She is knowing the answer already.","She knows the answer already.","She has knowing the answer already.","She is knew the answer already."],ans:1,exp:'"Know" is stative — use the simple present "knows."'},
+    {wrong:"When I arrived, the class already started.",opts:["When I arrived, the class already started.","When I arrived, the class had already started.","When I arrived, the class has already started.","When I arrived, the class already starts."],ans:1,exp:'The earlier past action needs the Past Perfect: "had already started."'},
+    {wrong:"I am living in Kuwait since 2019.",opts:["I am living in Kuwait since 2019.","I have lived in Kuwait since 2019.","I live in Kuwait since 2019.","I was living in Kuwait since 2019."],ans:1,exp:'"Since 2019" needs the Present Perfect "have lived."'}
+  ]},
+  agreement:{mcq:[
+    {q:'Choose the correct verb: "Each of the answers ___ correct."',opts:["are","is","were","have"],ans:1,exp:'"Each" is singular → "is."'},
+    {q:'"The team ___ winning every match this season." (American English)',opts:["are","is","have","were"],ans:1,exp:'Collective nouns take a singular verb in American English: "is."'},
+    {q:'Choose: "Either the manager or the staff ___ responsible."',opts:["is","are","was","has"],ans:1,exp:'With "either...or," the verb agrees with the nearer subject "staff" (plural) → "are."'},
+    {q:'"Mathematics ___ his favorite subject."',opts:["are","is","were","have"],ans:1,exp:'Disciplines ending in -s take a singular verb: "is."'},
+    {q:'Choose the correct verb: "Neither answer ___ acceptable."',opts:["are","is","were","have"],ans:1,exp:'"Neither" + a singular noun → the singular verb "is."'},
+    {q:'"The number of applicants ___ increasing."',opts:["are","is","were","have"],ans:1,exp:'"The number of" takes a singular verb → "is."'},
+    {q:'"A number of students ___ already left."',opts:["has","is","have","was"],ans:2,exp:'"A number of" means many → the plural verb "have."'},
+    {q:'Choose: "Everybody in the classes ___ a textbook."',opts:["have","has","were","are"],ans:1,exp:'"Everybody" is singular → "has"; the phrase "in the classes" does not change it.'},
+    {q:'"The news from the exams ___ encouraging."',opts:["are","is","were","have"],ans:1,exp:'"News" is uncountable and singular → "is."'},
+    {q:'"Ten years ___ a long time to teach one subject."',opts:["are","is","were","have"],ans:1,exp:'A measured period treated as one unit takes a singular verb → "is."'},
+    {q:'Choose: "One of the teachers ___ retiring this year."',opts:["are","is","were","have"],ans:1,exp:'The subject is "one" (singular) → "is"; "of the teachers" is just a phrase.'},
+    {q:'"Both Mohammad and Sara ___ at Kuwait University."',opts:["teaches","teach","is teaching","has taught"],ans:1,exp:'"Both...and" is plural → "teach."'}
+  ],err:[
+    {wrong:"The list of requirements are on the website.",opts:["The list of requirements are on the website.","The list of requirements is on the website.","The list of requirements were on the website.","The lists of requirement is on the website."],ans:1,exp:'The subject is "list" (singular); ignore "of requirements." Use "is."'},
+    {wrong:"Everyone have submitted their assignments.",opts:["Everyone have submitted their assignments.","Everyone has submitted their assignments.","Everyone have submitted his assignments.","Everyones has submitted their assignments."],ans:1,exp:'"Everyone" is singular → "has."'},
+    {wrong:"There is several reasons to study grammar.",opts:["There is several reasons to study grammar.","There are several reasons to study grammar.","There was several reasons to study grammar.","There is several reason to study grammar."],ans:1,exp:'The real subject "reasons" is plural → "There are."'},
+    {wrong:"My family are arriving from Rochester tonight.",opts:["My family are arriving from Rochester tonight.","My family is arriving from Rochester tonight.","My family arriving from Rochester tonight.","My families is arriving from Rochester tonight."],ans:1,exp:'Treat the collective noun "family" as a single unit (American English) → "is."'}
+  ]}
+};
+Object.keys(EXAM_EXTRA).forEach(function(k){if(LD[k]){if(EXAM_EXTRA[k].mcq)LD[k].mcqBank=(LD[k].mcqBank||[]).concat(EXAM_EXTRA[k].mcq);if(EXAM_EXTRA[k].err)LD[k].errBank=(LD[k].errBank||[]).concat(EXAM_EXTRA[k].err);}});
+
 let DS={};
 function dsk(l,a){return l+"_"+a;}
 function ds(l,a){const k=dsk(l,a);if(!DS[k]){const att=getRC(l,a);DS[k]={qi:0,ans:false,sel:null,tapped:[],fv:"",roAns:[],roShuf:null,mSel:null,mDone:{},mShuf:null,score:0,done:false,fi:0,ff:false,fb:null,att,qs:null};}return DS[k];}
@@ -1132,7 +1209,7 @@ let curExam=null;
 function phaseLastLid(i){const ls=PHASES[i].lessons;return ls[ls.length-1].id;}
 function phaseExamReady(i){return PHASES[i].lessons.every(l=>LD[l.id]&&LD[l.id].mcqBank);}
 function examCovered(i){return priorLessonIds(phaseLastLid(i)).length;}
-function examN(i){return Math.min(25,examCovered(i)*5);}
+function examN(i){return Math.min(50,buildCompPool(phaseLastLid(i)).length);}
 function getExamQs(i){const d=ds("p"+i,"exam");if(d.qs)return d.qs;const pool=buildCompPool(phaseLastLid(i));const n=Math.min(examN(i),pool.length);d.qs=drawQ("p"+i+"_exam",pool.length,n).map(x=>pool[x]);return d.qs;}
 function phaseShort(i){return PHASES[i].label.replace(/^Phase \d+\s*[—-]\s*/,"");}
 function examCardHTML(i,ph){const ex=ST.exam&&ST.exam["p"+i];const passed=ex&&ex.passed;return `<div class="exam-card${passed?" passed":""}" onclick="openExam(${i})"><div class="exam-ico">${passed?"🏅":"📝"}</div><div class="exam-info"><div class="exam-title">${phaseShort(i)} — Final Exam</div><div class="exam-sub">${ex?(passed?"Passed · best "+ex.best+"%":"Best "+ex.best+"% · pass 80%"):examN(i)+" questions · pass 80%"}</div></div><div class="exam-go">→</div></div>`;}

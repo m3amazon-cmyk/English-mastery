@@ -89,11 +89,12 @@ const LEVELS=[
 - **Sidebar:** `2/5 done · 78% mastery` per lesson
 
 ### Question bank sizes
-- pos: 21 MCQ, 16 fill, 6 match sets, 14 tap, 6 err
-- articles: 22 MCQ, 16 fill, 6 match sets, 10 tap, 6 err
-- tenses: 20 MCQ, 16 fill, 6 match sets, 10 tap, 6 err
-- agreement: 12 MCQ, 10 fill, 4 match sets, 8 tap, 6 err
+- pos: 33 MCQ, 16 fill, 6 match sets, 14 tap, 10 err
+- articles: 32 MCQ, 16 fill, 6 match sets, 10 tap, 10 err
+- tenses: 30 MCQ, 16 fill, 6 match sets, 10 tap, 10 err
+- agreement: 24 MCQ, 10 fill, 4 match sets, 8 tap, 10 err
 - phrases: 14 MCQ, 12 fill, 5 match sets, 10 tap, 6 err
+- `EXAM_EXTRA` (after the sublesson attachments) holds supplemental MCQ/Error-Fix for Lessons 1–4, merged into their banks at load — this deepened the Phase 1 pool to ~159 so the 50-question exam gives 3 fully fresh attempts. Add to it (or any bank) to keep exams/comprehension fresh.
 
 ### Key JS architecture notes
 - `LD` object holds all lesson data. Sub-lessons registered into `LD` dynamically via `LD[slid]` when first opened
@@ -104,7 +105,7 @@ const LEVELS=[
 - `curL` = current lesson id; `curSL` = current sub-lesson id
 - `hl(text)` auto-highlights grammar terms + ALL-CAPS words (bold blue `.hl`) in questions, tasks, fill sentences, explanations, flashcards, and concept cards — applied at render time, so authored content stays plain text (no manual markup needed)
 - `getQs` serves questions via `drawQ`/`ST.qpool` (persistent shuffled queue per lesson+activity) — no repeats until the bank cycles. To increase retry variety, enlarge the banks; note `err` banks (6) show all 6, so they need more items for truly fresh retries.
-- Phase exams: `openExam(i)`/`renderExam`/`examSubmit` on the `scr-exam` screen; cumulative pool via `buildCompPool(phaseLastLid(i))`, graded at the end, pass 80%, results in `ST.exam["p"+i]={best,passed}`; home card shown when `phaseExamReady(i)` (all phase lessons authored)
+- Phase exams: `openExam(i)`/`renderExam`/`examSubmit` on the `scr-exam` screen; cumulative pool via `buildCompPool(phaseLastLid(i))`, graded at the end, pass 80%, results in `ST.exam["p"+i]={best,passed}`; home card shown when `phaseExamReady(i)` (all phase lessons authored). `examN`=50 questions per exam (capped at pool size); pools must hold ≥150 for 3 non-overlapping attempts
 - Navigation: `goHome()` / `openLesson(lid)` / `openSubLesson(lid, slid)` / `closeSubLesson()`
 
 ---
