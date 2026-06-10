@@ -19,7 +19,7 @@ Mohammad — Kuwaiti, English Masters from Penn State (Rochester, 2017–2019), 
 - **Publishable key:** `sb_publishable_vyCD7qOBTheSMhM6fgXeLw_me3ViUg6`
 - **Table:** `progress(user_id text PK, data jsonb, updated_at timestamptz)`
 - **Auth:** passphrase stored in `localStorage` key `em_passphrase`
-- **localStorage key:** `em_full_v1` → `{xp, completed[], actDone{}, retryCount{}, mastery{}, streak, bestStreak, lastStudyDay, dailyXP{date,xp}, goalXP, studySeconds{total,today,day}, qpool{"lid_act":{order,pos}}, exam{"p<i>":{best,passed}}}`
+- **localStorage key:** `em_full_v1` → `{xp, completed[], actDone{}, retryCount{}, mastery{}, streak, bestStreak, lastStudyDay, dailyXP{date,xp}, goalXP, studySeconds{total,today,day}, qpool{"lid_act":{order,pos}}, exam{"p<i>":{best,passed}}, examples{"lid":[{task,text,rating,date}]}}`
 
 ---
 
@@ -39,11 +39,17 @@ Mohammad — Kuwaiti, English Masters from Penn State (Rochester, 2017–2019), 
 - ✅ Lesson 5 — Phrases (`phrases`) — unlocked (Phase 2)
 - 🔒 Lessons 6–15 — no content yet
 
-### Activities per lesson (8 tabs)
-Overview, Flashcards, MCQ Quiz (6 q), Fill in Blank (5 q), Match Pairs, Tap Word, **Error Fix** (6 q), **Comprehension** (cumulative MCQ + Error-Fix pooled from all lessons up to this one, 12 q, fresh each retry — `renderComp`/`getCompQs`/`buildCompPool`/`priorLessonIds`)
+### Activities per lesson (9 tabs)
+Overview, Flashcards, MCQ Quiz (6 q), Fill in Blank (5 q), Match Pairs, Tap Word, **Error Fix** (6 q), **Write** (self-check writing, 3–4 prompts), **Comprehension** (cumulative MCQ + Error-Fix pooled from all lessons up to this one, 12 q, fresh each retry — `renderComp`/`getCompQs`/`buildCompPool`/`priorLessonIds`)
+
+### Write (create-your-own-sentences) — self-check writing activity
+- `WRITE[lid]` = array of prompts `{task, model, checklist[]}`; attached via `LD[k].writeBank=WRITE[k]` in a loop (like `EXAM_EXTRA`). Authored for all 5 active lessons (3–4 prompts each).
+- Flow: type a sentence → **Reveal model answer** → shows model + a green-checked checklist → self-rate **Nailed it (+10 XP)** / **Needs review (+5 XP)**.
+- Each rated sentence is saved to a personal **example bank** (`ST.examples[lid]=[{task,text,rating,date}]`), shown below the activity with delete (×) — reusable as Mohammad's classroom examples.
+- Mastery % = nailed / total (via `markActDone(lid,"write",score,total)`). **Not** part of the 5-activity completion gate (like Comprehension — it's an extra tab). Functions: `renderWrite`/`writeBank`/`wType`/`wReveal`/`wRate`/`saveExample`/`delExample`/`exampleBankHTML`/`getExamples`. `esc()` HTML-escapes user text. To add prompts for new lessons, add a `WRITE` entry.
 
 ### Completion logic
-A lesson is "complete" when all 5 graded activities (mcq, fill, match, tap, **err**) are done → +50 XP
+A lesson is "complete" when all 5 graded activities (mcq, fill, match, tap, **err**) are done → +50 XP (Write & Comprehension are not gated)
 
 ### Sub-lessons (drill-down from Overview tab)
 The Overview is now a teach-first **Learn page** (see architecture notes); sub-lessons render below it as "deep dives". Each of the 5 active lessons has 3–4 sub-lessons with:
@@ -134,6 +140,7 @@ Dark mode via `[data-theme="dark"]` on `<html>`. Theme stored in `localStorage('
 
 ## Git state
 Branch: `main`. All changes committed and pushed. Recent commits (newest first):
+- _(latest)_ create-your-own-sentences Write activity + example bank
 - `c6a2f91` teach-first Learn overview on every lesson
 - `9c6db21` 50-question phase exams with 3 fresh attempts
 - `d3c84ae` graded phase final exams
@@ -152,19 +159,14 @@ See `nimbalyst-local/plans/english-mastery-roadmap.md` for the full 7-milestone 
 - ✅ **M1 — Consistency layer** (daily streak, daily-goal ring, Aug-6 countdown, study timer) — shipped 2026-06-06
 - 🔧 **M2 — Phase 2 content (Lessons 5–8)** — ✅ Lesson 5 (Phrases) shipped; Lessons 6–8 (clauses, sentencetypes, punctuation) pending review
 - M3 Phase 3 (9–12) · M4 Phase 4 (13–15) · M5 Teacher Mode · M6 Review/retention · M7 Polish
-- 🆕 **User review (2026-06-10):** ✅ retry-repeat fix · ✅ cumulative Comprehension quiz · ✅ phase final exams (graded, pass 80%, 🏅 badge; gate on all phase lessons authored) · ✅ bigger highlighted question text · ✅ teach-first Learn overview on every lesson (intro, table, memory hook, watch-out, teaching tip, takeaways, self-check). Queued in order: create-your-own-sentences (self-check), Lessons 6–8, mistake log, weak-spots review, Teacher Mode.
+- 🆕 **User review (2026-06-10):** ✅ retry-repeat fix · ✅ cumulative Comprehension quiz · ✅ phase final exams (graded, pass 80%, 🏅 badge; gate on all phase lessons authored) · ✅ bigger highlighted question text · ✅ teach-first Learn overview on every lesson · ✅ **create-your-own-sentences Write activity** (self-check + personal example bank). Queued in order: Lessons 6–8, mistake log, weak-spots review, Teacher Mode.
 
 ---
 
-## Next up (start here) — Create-your-own-sentences (#3)
-Locked design (decided with Mohammad):
-- A **writing activity**: give a task (e.g. "Write a sentence using a prepositional phrase as an adverb"), user types a sentence.
-- **Self-check** model: reveal a **model answer + a short checklist** of what to include; user self-rates (nailed it / review). No auto grammar-grading (static site, no backend AI — that's a possible later upgrade via a serverless function).
-- **Save the user's sentences** to `localStorage` as a reusable personal **example bank** (doubles as classroom examples for his teaching).
-- Award XP on completion. Add as a new activity tab (e.g. `✍️ Write`) wired into `TABS`/`showAct`/`rerender`, or a per-lesson section; reuse `.qwrap`/`.card` styles. Author per-lesson prompts (like `LEARN`/`EXAM_EXTRA`, attach via a loop).
+## Next up (start here) — Lessons 6–8 content (#1)
+✅ **Create-your-own-sentences Write activity shipped** (see "Write" section above). The queue is now:
 
-Then the rest of the queue, in order:
-1. **Lessons 6–8 content** (Clauses, Sentence Types, Punctuation) — unlocks the Phase 2 final exam. Follow the Lesson-5 pattern: `LD` entry + `SLD` sub-lessons + `LEARN` entry + unlock in `PHASES` + `LD.x.sublessons=SLD.x`. Keep `err` banks generous and add to `EXAM_EXTRA` so pools stay deep.
+1. **Lessons 6–8 content** (Clauses, Sentence Types, Punctuation) — unlocks the Phase 2 final exam. Follow the Lesson-5 pattern: `LD` entry + `SLD` sub-lessons + `LEARN` entry + unlock in `PHASES` + `LD.x.sublessons=SLD.x`. Keep `err` banks generous and add to `EXAM_EXTRA` so pools stay deep. **Also add a `WRITE` entry** (3–4 prompts) for each so the Write tab is populated.
 2. **Mistake log** — auto-save wrong answers, "review my misses" session.
 3. **Weak-spots auto-review** — drill lowest-mastery activities.
 4. **Teacher Mode** — per-lesson tab: common student errors + plain-English explanation scripts + classroom examples (expands on the per-lesson Teaching tip).

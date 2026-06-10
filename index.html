@@ -235,6 +235,22 @@ html,body{height:100%;background:var(--bg);font-family:'Plus Jakarta Sans',sans-
 .fill-inp.ok{border-color:var(--green);color:var(--green-dark);}
 .fill-inp.bad{border-color:var(--red);color:var(--red-dark);}
 .hint-tag{display:inline-block;font-size:11px;font-weight:600;color:var(--muted);background:var(--surface);border-radius:var(--r-full);padding:3px 10px;margin-bottom:10px;}
+.write-ta{width:100%;box-sizing:border-box;min-height:84px;resize:vertical;border:2px solid var(--border);border-radius:var(--r-sm);background:var(--white);font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:500;color:var(--text);line-height:1.6;padding:11px 13px;outline:none;margin-bottom:12px;transition:border-color .15s;}
+.write-ta:focus{border-color:var(--primary);}
+.write-ta[readonly]{background:var(--surface);color:var(--muted);}
+.write-cl{list-style:none;margin:4px 0 0;padding:0;}
+.write-cl li{position:relative;padding-left:22px;margin-bottom:5px;font-size:12.5px;line-height:1.5;}
+.write-cl li:before{content:"✓";position:absolute;left:0;top:0;color:var(--green);font-weight:800;}
+.bank-box{background:var(--white);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);padding:14px;margin-bottom:14px;}
+.bank-h{font-size:13px;font-weight:800;margin-bottom:4px;display:flex;align-items:center;gap:6px;}
+.bank-sub{font-size:11.5px;color:var(--muted);margin-bottom:10px;}
+.bank-item{border-left:3px solid var(--border);padding:7px 10px;margin-bottom:8px;background:var(--surface);border-radius:0 var(--r-sm) var(--r-sm) 0;position:relative;}
+.bank-item.nailed{border-color:var(--green);}
+.bank-item.review{border-color:var(--yellow);}
+.bank-task{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px;padding-right:24px;}
+.bank-text{font-size:14px;font-weight:600;color:var(--text);line-height:1.5;}
+.bank-del{position:absolute;top:6px;right:8px;cursor:pointer;color:var(--muted);font-size:15px;line-height:1;border:none;background:none;padding:2px;}
+.bank-del:hover{color:var(--red);}
 .match-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
 .match-col{display:flex;flex-direction:column;gap:6px;}
 .match-item{padding:11px 10px;border-radius:var(--r-sm);border:2px solid var(--border);background:var(--white);cursor:pointer;font-size:12px;font-weight:600;text-align:center;transition:all .15s;line-height:1.4;-webkit-user-select:none;}
@@ -435,6 +451,7 @@ function fmtStudyTime(s){s=Math.floor(s||0);const h=Math.floor(s/3600),m=Math.fl
 // Keyword highlighting: bold + blue for grammar terms and ALL-CAPS focus words
 const HL_TERMS=new Set("noun nouns pronoun pronouns verb verbs adjective adjectives adverb adverbs preposition prepositions conjunction conjunctions interjection interjections article articles determiner determiners subject subjects object objects predicate predicates clause clauses phrase phrases tense tenses gerund gerunds infinitive infinitives participle participles participial appositive appositives auxiliary auxiliaries modal modals antecedent antecedents definite indefinite".split(" "));
 function hl(t){if(t==null)return t;return String(t).replace(/[A-Za-z]+/g,function(w){return (/^[A-Z]{2,}$/.test(w)||HL_TERMS.has(w.toLowerCase()))?'<span class="hl">'+w+'</span>':w;});}
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
 let _studyDirty=false,_studyTick=null;
 function studyTick(){const scr=document.querySelector(".screen.active");if(!scr||document.visibilityState!=="visible")return;if(scr.id!=="scr-lesson"&&scr.id!=="scr-sub")return;ensureDailyFields();ST.studySeconds.today++;ST.studySeconds.total++;_studyDirty=true;if(ST.studySeconds.total%20===0)saveLocal();}
 function flushStudy(){if(_studyDirty){saveST();_studyDirty=false;}}
@@ -1125,6 +1142,41 @@ const EXAM_EXTRA={
 };
 Object.keys(EXAM_EXTRA).forEach(function(k){if(LD[k]){if(EXAM_EXTRA[k].mcq)LD[k].mcqBank=(LD[k].mcqBank||[]).concat(EXAM_EXTRA[k].mcq);if(EXAM_EXTRA[k].err)LD[k].errBank=(LD[k].errBank||[]).concat(EXAM_EXTRA[k].err);}});
 
+// ── "Write your own" prompts: a self-check writing activity per lesson ──
+// Each prompt: a task, a model answer to compare against, and a short checklist.
+// No auto-grading — the learner reveals the model + checklist and self-rates.
+const WRITE={
+  pos:[
+    {task:"Write a sentence that uses both a concrete noun and an abstract noun.",model:"The teacher shared her wisdom with the students.",checklist:["Includes a concrete noun — something you can see or touch (e.g. teacher, students)","Includes an abstract noun — an idea or feeling (e.g. wisdom, courage)","Is a complete sentence with a subject and a verb"]},
+    {task:"Write a sentence that uses an adverb to describe HOW an action happens.",model:"Mohammad explained the rule clearly to his class at Kuwait University.",checklist:["Has an action verb","Has an adverb modifying that verb (often ends in -ly)","The adverb answers the question: how?"]},
+    {task:"Write a sentence that joins two complete ideas with a coordinating conjunction (and, but, or, so).",model:"I studied at Penn State, and now I teach in Kuwait.",checklist:["Contains two complete ideas (each could stand alone)","Joins them with a coordinating conjunction (FANBOYS)","Uses a comma before the conjunction"]},
+    {task:"Write a sentence that uses a preposition to show location.",model:"The library sits between the science building and the cafeteria.",checklist:["Includes a preposition (in, on, at, between, under, …)","The preposition is followed by a noun (its object)","The phrase tells us where"]}
+  ],
+  articles:[
+    {task:"Write a sentence that uses 'the' for something specific that both you and the reader already know about.",model:"Please return the book I lent you last week.",checklist:["Uses 'the' before the noun","The noun is specific and identifiable to the reader","Is a complete sentence"]},
+    {task:"Write a sentence using 'a' or 'an' to mention something for the first time.",model:"I bought a notebook and an eraser for class.",checklist:["Uses 'a' before a consonant sound or 'an' before a vowel sound","Introduces a singular, countable noun for the first time","Is a complete sentence"]},
+    {task:"Write a sentence with NO article (zero article) before a general or uncountable noun.",model:"Knowledge grows when teachers share ideas.",checklist:["Has a general or uncountable noun with no article (e.g. knowledge, ideas)","The meaning is general, not one specific thing","Is a complete sentence"]}
+  ],
+  tenses:[
+    {task:"Write a sentence in the present perfect about your own experience.",model:"I have taught English for several years.",checklist:["Uses have/has + past participle","Links the past to now (an experience or result)","Avoids a finished-time word like 'yesterday'"]},
+    {task:"Write a sentence in the past continuous describing an action in progress in the past.",model:"I was living in Rochester while I studied at Penn State.",checklist:["Uses was/were + verb-ing","Describes an action in progress at a past moment","Is a complete sentence"]},
+    {task:"Write a sentence about a future plan using 'going to' or the present continuous.",model:"I am going to design a new grammar lesson next week.",checklist:["Uses 'be going to + verb' or the present continuous","Clearly refers to the future","Is a complete sentence"]},
+    {task:"Write a sentence using a stative verb (one not normally used in the -ing form).",model:"I believe grammar becomes easier with practice.",checklist:["Uses a stative verb (believe, know, want, like, …)","The verb is NOT in the -ing form","Is a complete sentence"]}
+  ],
+  agreement:[
+    {task:"Write a sentence where a singular subject agrees correctly with its verb.",model:"Each student submits one essay.",checklist:["The subject is singular","The present-tense verb takes the -s form","Is a complete sentence"]},
+    {task:"Write a sentence using an indefinite pronoun (everyone, somebody, each) with the correct verb.",model:"Everyone in the class works hard.",checklist:["Uses an indefinite pronoun as the subject","Treats it as singular (verb takes -s)","Is a complete sentence"]},
+    {task:"Write a sentence with a collective noun (team, family, committee) and a matching verb.",model:"The committee meets every Sunday.",checklist:["Uses a collective noun as the subject","The verb agrees (usually singular when the group acts as one)","Is a complete sentence"]}
+  ],
+  phrases:[
+    {task:"Write a sentence containing a noun phrase with at least two modifiers.",model:"The bright young students from Kuwait University asked great questions.",checklist:["Has a noun phrase: a noun plus its modifiers","Includes two or more modifiers (article, adjective, etc.)","Is a complete sentence"]},
+    {task:"Write a sentence with a prepositional phrase acting as an adverb (telling where, when, or how).",model:"We met in the morning before the lecture.",checklist:["Includes a prepositional phrase (preposition + object)","The phrase modifies the verb (where/when/how)","Is a complete sentence"]},
+    {task:"Write a sentence using a verb phrase that includes an auxiliary (helping) verb.",model:"Mohammad has been preparing his lessons carefully.",checklist:["Has a main verb plus one or more auxiliaries (be, have, do, or a modal)","Forms a complete verb phrase","Is a complete sentence"]},
+    {task:"Write a sentence with an adjective phrase that describes a noun.",model:"The lesson, full of clear examples, helped everyone.",checklist:["Includes an adjective phrase (an adjective plus its modifiers or complements)","The phrase describes a noun","Is a complete sentence"]}
+  ]
+};
+Object.keys(WRITE).forEach(function(k){if(LD[k])LD[k].writeBank=WRITE[k];});
+
 // ── Teach-first "Learn" content for each lesson overview ──
 const LEARN={
   pos:{
@@ -1189,10 +1241,10 @@ let curL=null,curA="overview";
 function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");}
 function goHome(){flushStudy();showScreen("scr-home");buildHome();}
 function openLesson(lid){const d=LD[lid];if(!d){toast("Coming soon! 🚧");return;}curL=lid;curA="overview";document.getElementById("lh-t").textContent=d.title;document.getElementById("lh-s").textContent=d.sub;showScreen("scr-lesson");buildTabs(lid);showAct(lid,"overview");buildSidebar();}
-const TABS=[{id:"overview",label:"📖 Overview"},{id:"flashcards",label:"🃏 Flashcards"},{id:"mcq",label:"❓ Quiz"},{id:"fill",label:"✏️ Fill Blank"},{id:"match",label:"🔗 Match"},{id:"tap",label:"👆 Tap Word"},{id:"err",label:"🔍 Error Fix"},{id:"comp",label:"🎯 Comprehension"}];
+const TABS=[{id:"overview",label:"📖 Overview"},{id:"flashcards",label:"🃏 Flashcards"},{id:"mcq",label:"❓ Quiz"},{id:"fill",label:"✏️ Fill Blank"},{id:"match",label:"🔗 Match"},{id:"tap",label:"👆 Tap Word"},{id:"err",label:"🔍 Error Fix"},{id:"write",label:"✍️ Write"},{id:"comp",label:"🎯 Comprehension"}];
 function buildTabs(lid){const row=document.getElementById("tabs-row");row.innerHTML="";TABS.forEach(t=>{const isDone=t.id!=="overview"&&t.id!=="flashcards"&&ST.actDone[lid]&&ST.actDone[lid][t.id];const score=isDone?actScore(lid,t.id):null;const btn=document.createElement("div");btn.className="tab"+(curA===t.id?" active":"")+(isDone?" done-tab":"");btn.textContent=isDone?(score!==null?t.label+" "+score+"%":t.label+" ✓"):t.label;btn.onclick=()=>{curA=t.id;buildTabs(lid);showAct(lid,t.id);};row.appendChild(btn);});}
-function showAct(lid,act){const p=document.getElementById("panels");p.innerHTML="";document.getElementById("lesson-scroll").scrollTop=0;const d=LD[lid];if(act==="overview")p.innerHTML=renderOV(d,lid);else if(act==="flashcards")renderFC(lid,p);else if(act==="mcq")renderMCQ(lid,p);else if(act==="fill")renderFill(lid,p);else if(act==="match")renderMatch(lid,p);else if(act==="tap")renderTap(lid,p);else if(act==="err")renderErr(lid,p);else if(act==="comp")renderComp(lid,p);}
-function rerender(lid,act){const p=document.getElementById("panels");if(!p)return;if(act==="flashcards")renderFC(lid,p);else if(act==="mcq")renderMCQ(lid,p);else if(act==="fill")renderFill(lid,p);else if(act==="match")renderMatch(lid,p);else if(act==="tap")renderTap(lid,p);else if(act==="err")renderErr(lid,p);else if(act==="comp")renderComp(lid,p);}
+function showAct(lid,act){const p=document.getElementById("panels");p.innerHTML="";document.getElementById("lesson-scroll").scrollTop=0;const d=LD[lid];if(act==="overview")p.innerHTML=renderOV(d,lid);else if(act==="flashcards")renderFC(lid,p);else if(act==="mcq")renderMCQ(lid,p);else if(act==="fill")renderFill(lid,p);else if(act==="match")renderMatch(lid,p);else if(act==="tap")renderTap(lid,p);else if(act==="err")renderErr(lid,p);else if(act==="write")renderWrite(lid,p);else if(act==="comp")renderComp(lid,p);}
+function rerender(lid,act){const p=document.getElementById("panels");if(!p)return;if(act==="flashcards")renderFC(lid,p);else if(act==="mcq")renderMCQ(lid,p);else if(act==="fill")renderFill(lid,p);else if(act==="match")renderMatch(lid,p);else if(act==="tap")renderTap(lid,p);else if(act==="err")renderErr(lid,p);else if(act==="write")renderWrite(lid,p);else if(act==="comp")renderComp(lid,p);}
 function switchAct(lid,act){curA=act;buildTabs(lid);showAct(lid,act);}
 
 function renderOV(d,lid){
@@ -1271,6 +1323,17 @@ function renderErr(lid,el){const d=ds(lid,"err"),qs=getQs(lid,"err");if(d.done){
 function eSel(lid,i){const d=ds(lid,"err");if(d.ans)return;d.sel=i;d.fb=null;rerender(lid,"err");}
 function eChk(lid){const d=ds(lid,"err"),qs=getQs(lid,"err"),q=qs[d.qi];if(d.sel===null){d.fb={t:"info",m:"Select an answer first."};rerender(lid,"err");return;}const ok=d.sel===q.ans;d.ans=true;d.fb={t:ok?"ok":"bad",m:q.exp};if(ok){d.score++;addXP(10);}rerender(lid,"err");}
 function eNext(lid){const d=ds(lid,"err"),qs=getQs(lid,"err");if(d.qi<qs.length-1){d.qi++;d.ans=false;d.sel=null;d.fb=null;rerender(lid,"err");}else{d.done=true;markActDone(lid,"err",d.score,qs.length);rerender(lid,"err");}}
+
+// ── Write your own: self-check writing activity + personal example bank ──
+function writeBank(lid){return (LD[lid]&&LD[lid].writeBank)||[];}
+function getExamples(lid){return (ST.examples&&ST.examples[lid])||[];}
+function saveExample(lid,task,text,nailed){if(!ST.examples)ST.examples={};if(!ST.examples[lid])ST.examples[lid]=[];ST.examples[lid].push({task:task,text:text,rating:nailed?"nailed":"review",date:todayStr()});saveST();}
+function delExample(lid,i){if(ST.examples&&ST.examples[lid]){ST.examples[lid].splice(i,1);saveST();rerender(lid,"write");}}
+function exampleBankHTML(lid){const ex=getExamples(lid);if(!ex.length)return "";let h=`<div class="bank-box"><div class="bank-h">📓 Your sentence bank</div><div class="bank-sub">Saved sentences for this lesson — reuse them as your own classroom examples.</div>`;ex.forEach((e,i)=>{h+=`<div class="bank-item ${e.rating}"><button class="bank-del" title="Delete" onclick="delExample('${lid}',${i})">×</button><div class="bank-task">${esc(e.task)}</div><div class="bank-text">${esc(e.text)}</div></div>`;});return h+`</div>`;}
+function renderWrite(lid,el){const prompts=writeBank(lid),d=ds(lid,"write");if(!prompts.length){el.innerHTML='<div class="card"><div class="intro-desc">Writing prompts unlock once this lesson has content.</div></div>';return;}if(d.done){el.innerHTML=doneBanner(lid,"write",d.score,prompts.length,null)+exampleBankHTML(lid);return;}if(d.wv===undefined)d.wv="";const q=prompts[d.qi];let h=`<div class="qwrap"><div class="qwrap-top"><div class="qwrap-title">✍️ Write your own</div><div class="qright"><div class="qcounter">${d.qi+1}/${prompts.length}</div></div></div><div class="qprog"><div class="qprog-fill" style="width:${(d.qi/prompts.length)*100}%"></div></div><div class="q-text">${hl(q.task)}</div>`;h+=`<textarea id="wt" class="write-ta" placeholder="Type your sentence here…" ${d.wRev?"readonly":""} oninput="wType('${lid}',this.value)">${esc(d.wv)}</textarea>`;if(!d.wRev){h+=`<div class="hint-tag">Write your best attempt, then reveal a model answer to check yourself.</div><div class="btn-row"><button class="btn primary" onclick="wReveal('${lid}')">Reveal model answer →</button></div>`;}else{h+=`<div class="callout tip"><div class="callout-t">💡 Model answer</div><div>${hl(q.model)}</div></div>`;h+=`<div class="callout hook"><div class="callout-t">Does your sentence…</div><ul class="write-cl">${q.checklist.map(c=>`<li>${hl(c)}</li>`).join("")}</ul></div>`;h+=`<div class="q-text" style="font-size:14px;margin-bottom:8px">How did you do?</div><div class="btn-row"><button class="btn success" onclick="wRate('${lid}',true)">✓ Nailed it (+10 XP)</button><button class="btn" onclick="wRate('${lid}',false)">✎ Needs review (+5 XP)</button></div>`;}h+=`</div>`;h+=exampleBankHTML(lid);el.innerHTML=h;const ta=document.getElementById("wt");if(ta&&!d.wRev)setTimeout(()=>ta.focus(),80);}
+function wType(lid,v){ds(lid,"write").wv=v;}
+function wReveal(lid){const d=ds(lid,"write");const ta=document.getElementById("wt");if(ta)d.wv=ta.value;if(!(d.wv||"").trim()){toast("Write a sentence first ✍️");return;}d.wRev=true;rerender(lid,"write");}
+function wRate(lid,nailed){const d=ds(lid,"write"),prompts=writeBank(lid),q=prompts[d.qi];saveExample(lid,q.task,(d.wv||"").trim(),nailed);if(nailed){d.score++;addXP(10);}else{addXP(5);}if(d.qi<prompts.length-1){d.qi++;d.wv="";d.wRev=false;rerender(lid,"write");}else{d.done=true;markActDone(lid,"write",d.score,prompts.length);rerender(lid,"write");}}
 
 function doneBanner(lid,act,score,total,nextAct){const pct=Math.round((score/total)*100);const em=pct===100?"🏆":pct>=70?"🎉":"💪";return `<div class="done-card"><div class="done-emoji">${em}</div><div class="done-title">${pct===100?"Perfect score!":pct>=70?"Great work!":"Keep practicing!"}</div><div class="done-score">${score}/${total} · ${pct}%</div><div class="done-sub">${pct===100?"You nailed every question.":pct>=70?"Strong effort — review any misses.":"Every attempt makes you stronger."}</div><div class="btn-row" style="justify-content:center"><button class="btn" onclick="retryAct('${lid}','${act}')">↺ New set</button>${nextAct?`<button class="btn primary" onclick="switchAct('${lid}','${nextAct}')">Next →</button>`:`<button class="btn success" onclick="goHome()">🏠 Home</button>`}</div></div>`;}
 function retryAct(lid,act){resetDS(lid,act);rerender(lid,act);}
