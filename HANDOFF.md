@@ -104,6 +104,7 @@ const LEVELS=[
 - `curL` = current lesson id; `curSL` = current sub-lesson id
 - `hl(text)` auto-highlights grammar terms + ALL-CAPS words (bold blue `.hl`) in questions, tasks, fill sentences, explanations, flashcards, and concept cards — applied at render time, so authored content stays plain text (no manual markup needed)
 - `getQs` serves questions via `drawQ`/`ST.qpool` (persistent shuffled queue per lesson+activity) — no repeats until the bank cycles. To increase retry variety, enlarge the banks; note `err` banks (6) show all 6, so they need more items for truly fresh retries.
+- Phase exams: `openExam(i)`/`renderExam`/`examSubmit` on the `scr-exam` screen; cumulative pool via `buildCompPool(phaseLastLid(i))`, graded at the end, pass 80%, results in `ST.exam["p"+i]={best,passed}`; home card shown when `phaseExamReady(i)` (all phase lessons authored)
 - Navigation: `goHome()` / `openLesson(lid)` / `openSubLesson(lid, slid)` / `closeSubLesson()`
 
 ---
@@ -145,7 +146,7 @@ See `nimbalyst-local/plans/english-mastery-roadmap.md` for the full 7-milestone 
 - ✅ **M1 — Consistency layer** (daily streak, daily-goal ring, Aug-6 countdown, study timer) — shipped 2026-06-06
 - 🔧 **M2 — Phase 2 content (Lessons 5–8)** — ✅ Lesson 5 (Phrases) shipped; Lessons 6–8 (clauses, sentencetypes, punctuation) pending review
 - M3 Phase 3 (9–12) · M4 Phase 4 (13–15) · M5 Teacher Mode · M6 Review/retention · M7 Polish
-- 🆕 **User review (2026-06-10):** ✅ retry-repeat fix · ✅ cumulative Comprehension quiz · ✅ bigger highlighted question text. Queued in order: create-your-own-sentences (self-check), Lessons 6–8, mistake log, weak-spots review, Teacher Mode.
+- 🆕 **User review (2026-06-10):** ✅ retry-repeat fix · ✅ cumulative Comprehension quiz · ✅ phase final exams (graded, pass 80%, 🏅 badge; gate on all phase lessons authored) · ✅ bigger highlighted question text. Queued in order: create-your-own-sentences (self-check), Lessons 6–8, mistake log, weak-spots review, Teacher Mode.
 
 ## Suggested next features (original brainstorm — superseded by the roadmap above)
 

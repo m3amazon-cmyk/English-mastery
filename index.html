@@ -73,6 +73,16 @@ html,body{height:100%;background:var(--bg);font-family:'Plus Jakarta Sans',sans-
 .sb-goal-top{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);font-weight:600;margin-bottom:4px;}
 .sb-goal-track{height:5px;background:var(--surface);border-radius:99px;overflow:hidden;}
 .sb-goal-fill{height:5px;border-radius:99px;background:var(--green);transition:width .4s;}
+.exam-card{background:linear-gradient(135deg,var(--primary),var(--purple));border-radius:var(--r);padding:16px;margin:6px 0 10px;display:flex;align-items:center;gap:12px;cursor:pointer;box-shadow:var(--shadow-md);color:#fff;-webkit-user-select:none;transition:transform .15s;}
+.exam-card:active{transform:scale(.98);}
+.exam-card.passed{background:linear-gradient(135deg,var(--green),var(--green-dark));}
+.exam-ico{font-size:26px;flex-shrink:0;}
+.exam-info{flex:1;min-width:0;}
+.exam-title{font-size:14px;font-weight:800;}
+.exam-sub{font-size:12px;opacity:.92;margin-top:1px;}
+.exam-go{font-size:20px;font-weight:800;opacity:.9;}
+.exam-q-meta{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);font-weight:600;margin-bottom:10px;}
+.exam-review-item{background:var(--white);border-radius:var(--r-sm);padding:12px;margin-bottom:8px;box-shadow:var(--shadow);border-left:4px solid var(--red);}
 .lessons-grid{display:grid;gap:8px;margin-bottom:4px;}
 @media(min-width:769px){.lessons-grid{grid-template-columns:1fr 1fr;}}
 .err-sent-box{background:var(--red-light);border:2px solid var(--red);border-radius:var(--r-sm);padding:14px;margin-bottom:12px;font-size:13.5px;font-weight:500;line-height:1.7;color:var(--red-dark);}
@@ -326,6 +336,19 @@ html,body{height:100%;background:var(--bg);font-family:'Plus Jakarta Sans',sans-
     <div class="tabs" id="sub-tabs-row"></div>
     <div id="sub-panels"></div>
   </div>
+</div>
+
+<!-- PHASE EXAM -->
+<div class="screen" id="scr-exam">
+  <div class="lesson-header">
+    <button class="back-btn" onclick="goHome()">←</button>
+    <div class="lh-info">
+      <div class="lh-title" id="exam-t">Final Exam</div>
+      <div class="lh-sub" id="exam-s">—</div>
+    </div>
+    <button class="theme-btn" onclick="toggleTheme()">🌙</button>
+  </div>
+  <div class="lesson-scroll" id="exam-scroll"><div id="exam-body"></div></div>
 </div>
 </div><!-- /main-area -->
 </div><!-- /layout -->
@@ -1104,6 +1127,24 @@ function cSel(lid,i){const d=ds(lid,"comp");if(d.ans)return;d.sel=i;d.fb=null;re
 function cChk(lid){const d=ds(lid,"comp"),qs=getCompQs(lid),q=qs[d.qi];if(d.sel==null){d.fb={t:"info",m:"Select an answer first."};rerender(lid,"comp");return;}const ok=d.sel===q.ans;d.ans=true;d.fb={t:ok?"ok":"bad",m:q.exp};if(ok){d.score++;addXP(8);}rerender(lid,"comp");}
 function cNext(lid){const d=ds(lid,"comp"),qs=getCompQs(lid);if(d.qi<qs.length-1){d.qi++;d.ans=false;d.sel=null;d.fb=null;rerender(lid,"comp");}else{d.done=true;markActDone(lid,"comp",d.score,qs.length);rerender(lid,"comp");}}
 
+// ── Phase final exams: cumulative pool, graded at the end, pass mark + badge ──
+let curExam=null;
+function phaseLastLid(i){const ls=PHASES[i].lessons;return ls[ls.length-1].id;}
+function phaseExamReady(i){return PHASES[i].lessons.every(l=>LD[l.id]&&LD[l.id].mcqBank);}
+function examCovered(i){return priorLessonIds(phaseLastLid(i)).length;}
+function examN(i){return Math.min(25,examCovered(i)*5);}
+function getExamQs(i){const d=ds("p"+i,"exam");if(d.qs)return d.qs;const pool=buildCompPool(phaseLastLid(i));const n=Math.min(examN(i),pool.length);d.qs=drawQ("p"+i+"_exam",pool.length,n).map(x=>pool[x]);return d.qs;}
+function phaseShort(i){return PHASES[i].label.replace(/^Phase \d+\s*[—-]\s*/,"");}
+function examCardHTML(i,ph){const ex=ST.exam&&ST.exam["p"+i];const passed=ex&&ex.passed;return `<div class="exam-card${passed?" passed":""}" onclick="openExam(${i})"><div class="exam-ico">${passed?"🏅":"📝"}</div><div class="exam-info"><div class="exam-title">${phaseShort(i)} — Final Exam</div><div class="exam-sub">${ex?(passed?"Passed · best "+ex.best+"%":"Best "+ex.best+"% · pass 80%"):examN(i)+" questions · pass 80%"}</div></div><div class="exam-go">→</div></div>`;}
+function openExam(i){curExam=i;ds("p"+i,"exam");document.getElementById("exam-t").textContent=phaseShort(i)+" — Final Exam";document.getElementById("exam-s").textContent=PHASES[i].label.split(/[—-]/)[0].trim()+" · pass 80%";showScreen("scr-exam");document.getElementById("exam-scroll").scrollTop=0;renderExamIntro(i);}
+function renderExamIntro(i){const ex=ST.exam&&ST.exam["p"+i];document.getElementById("exam-body").innerHTML=`<div class="card" style="text-align:center"><div style="font-size:42px;margin-bottom:6px">${ex&&ex.passed?"🏅":"📝"}</div><div class="intro-h">${phaseShort(i)} — Final Exam</div><div class="intro-desc">${examN(i)} questions drawn from everything you have learned up to this phase. You will be graded at the end — the pass mark is <strong>80%</strong>.${ex?` Your best so far: <strong>${ex.best}%</strong>${ex.passed?" · passed ✓":""}.`:""}</div><button class="btn primary" style="width:100%;margin-top:14px" onclick="startExam(${i})">${ex?"Retake exam":"Start exam"} →</button></div>`;}
+function startExam(i){resetDS("p"+i,"exam");const d=ds("p"+i,"exam");d.answers=[];d.qi=0;d.submitted=false;getExamQs(i);document.getElementById("exam-scroll").scrollTop=0;renderExam();}
+function renderExam(){const i=curExam,d=ds("p"+i,"exam"),qs=getExamQs(i);if(d.submitted){renderExamResults(i);return;}if(!d.answers)d.answers=[];const q=qs[d.qi];const answered=d.answers.filter(a=>a!=null).length;let h=`<div class="qwrap"><div class="exam-q-meta"><span>Question ${d.qi+1} of ${qs.length}</span><span>${answered}/${qs.length} answered</span></div><div class="qprog"><div class="qprog-fill" style="width:${((d.qi+1)/qs.length)*100}%"></div></div><div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">From: ${q.from}</div><div class="q-text">${hl(q.prompt)}</div>`;if(q.kind==="err")h+=`<div class="err-sent-box">✗ ${q.sent}</div>`;h+=`<div class="mcq-opts">`;q.opts.forEach((o,k)=>{h+=`<div class="mcq-opt${d.answers[d.qi]===k?" sel":""}" onclick="examSel(${k})"><div class="opt-key">${String.fromCharCode(65+k)}</div>${o}</div>`;});h+=`</div><div class="btn-row">`;if(d.qi>0)h+=`<button class="btn" onclick="examNav(-1)">← Prev</button>`;if(d.qi<qs.length-1)h+=`<button class="btn primary" onclick="examNav(1)">Next →</button>`;if(d.qi===qs.length-1)h+=`<button class="btn success" onclick="examSubmit()">Submit exam ✓</button>`;h+=`</div></div>`;document.getElementById("exam-body").innerHTML=h;}
+function examSel(k){const d=ds("p"+curExam,"exam");if(!d.answers)d.answers=[];d.answers[d.qi]=k;renderExam();}
+function examNav(dir){const d=ds("p"+curExam,"exam"),qs=getExamQs(curExam);d.qi=Math.max(0,Math.min(qs.length-1,d.qi+dir));document.getElementById("exam-scroll").scrollTop=0;renderExam();}
+function examSubmit(){const i=curExam,d=ds("p"+i,"exam"),qs=getExamQs(i);const unans=qs.length-d.answers.filter(a=>a!=null).length;if(unans>0&&!confirm(unans+" question(s) still unanswered. Submit anyway?"))return;let score=0;qs.forEach((q,k)=>{if(d.answers[k]===q.ans)score++;});d.score=score;d.submitted=true;const pct=Math.round((score/qs.length)*100),passed=pct>=80;if(!ST.exam)ST.exam={};const prev=ST.exam["p"+i]||{best:0,passed:false};const newlyPassed=passed&&!prev.passed;ST.exam["p"+i]={best:Math.max(prev.best||0,pct),passed:prev.passed||passed};addXP(score*5+(newlyPassed?100:0));saveST();if(passed)toast(newlyPassed?"🏅 Phase mastered! +100 XP":"✓ Passed again!");document.getElementById("exam-scroll").scrollTop=0;renderExam();}
+function renderExamResults(i){const d=ds("p"+i,"exam"),qs=getExamQs(i);const pct=Math.round((d.score/qs.length)*100),passed=pct>=80;let h=`<div class="done-card"><div class="done-emoji">${passed?"🏅":"📚"}</div><div class="done-title">${passed?"Phase mastered!":"Keep going!"}</div><div class="done-score">${d.score}/${qs.length} · ${pct}%</div><div class="done-sub">${passed?"You passed the final exam for this phase.":"Pass mark is 80% — review the misses below and retake."}</div><div class="btn-row" style="justify-content:center"><button class="btn primary" onclick="startExam(${i})">↺ Retake</button><button class="btn success" onclick="goHome()">🏠 Home</button></div></div>`;const misses=qs.map((q,k)=>({q:q,k:k})).filter(o=>d.answers[o.k]!==o.q.ans);if(misses.length){h+=`<div class="exp-h" style="margin:16px 0 8px">Review — ${misses.length} to revisit</div>`;misses.forEach(o=>{const q=o.q,your=d.answers[o.k];h+=`<div class="exam-review-item"><div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:4px">From: ${q.from}</div><div style="font-weight:700;font-size:13.5px;margin-bottom:6px">${hl(q.prompt)}</div>${q.kind==="err"?`<div class="err-sent-box" style="margin-bottom:6px">✗ ${q.sent}</div>`:""}<div style="font-size:12.5px;color:var(--red-dark);margin-bottom:2px">Your answer: ${your!=null?q.opts[your]:"(blank)"}</div><div style="font-size:12.5px;color:var(--green-dark);margin-bottom:4px">Correct: ${q.opts[q.ans]}</div><div style="font-size:12px;color:var(--muted);line-height:1.5">${hl(q.exp)}</div></div>`;});}document.getElementById("exam-body").innerHTML=h;}
+
 // SUB-LESSON NAVIGATION
 let curSL=null;
 const SUB_TABS=[{id:"overview",label:"📖 Overview"},{id:"mcq",label:"❓ Quiz"},{id:"fill",label:"✏️ Fill Blank"}];
@@ -1234,7 +1275,7 @@ function buildHome(){
         <div class="level-track"><div class="level-fill" style="width:${lvPct}%;background:${lv.color}"></div></div>
       </div>
     </div>
-    ${PHASES.map(ph=>`
+    ${PHASES.map((ph,phi)=>`
       <div class="phase-divider">${ph.label}</div>
       <div class="lessons-grid">
       ${ph.lessons.map(l=>{
@@ -1251,6 +1292,7 @@ function buildHome(){
         </div>`;
       }).join("")}
       </div>
+      ${phaseExamReady(phi)?examCardHTML(phi,ph):""}
     `).join("")}
     <div style="height:24px"></div>`;
   buildSidebar();
