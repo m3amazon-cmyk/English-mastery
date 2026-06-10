@@ -39,8 +39,8 @@ Mohammad — Kuwaiti, English Masters from Penn State (Rochester, 2017–2019), 
 - ✅ Lesson 5 — Phrases (`phrases`) — unlocked (Phase 2)
 - 🔒 Lessons 6–15 — no content yet
 
-### Activities per lesson (7 tabs)
-Overview, Flashcards, MCQ Quiz (6 q), Fill in Blank (5 q), Match Pairs, Tap Word, **Error Fix** (6 q)
+### Activities per lesson (8 tabs)
+Overview, Flashcards, MCQ Quiz (6 q), Fill in Blank (5 q), Match Pairs, Tap Word, **Error Fix** (6 q), **Comprehension** (cumulative MCQ + Error-Fix pooled from all lessons up to this one, 12 q, fresh each retry — `renderComp`/`getCompQs`/`buildCompPool`/`priorLessonIds`)
 
 ### Completion logic
 A lesson is "complete" when all 5 graded activities (mcq, fill, match, tap, **err**) are done → +50 XP
@@ -145,6 +145,7 @@ See `nimbalyst-local/plans/english-mastery-roadmap.md` for the full 7-milestone 
 - ✅ **M1 — Consistency layer** (daily streak, daily-goal ring, Aug-6 countdown, study timer) — shipped 2026-06-06
 - 🔧 **M2 — Phase 2 content (Lessons 5–8)** — ✅ Lesson 5 (Phrases) shipped; Lessons 6–8 (clauses, sentencetypes, punctuation) pending review
 - M3 Phase 3 (9–12) · M4 Phase 4 (13–15) · M5 Teacher Mode · M6 Review/retention · M7 Polish
+- 🆕 **User review (2026-06-10):** ✅ retry-repeat fix · ✅ cumulative Comprehension quiz · ✅ bigger highlighted question text. Queued in order: create-your-own-sentences (self-check), Lessons 6–8, mistake log, weak-spots review, Teacher Mode.
 
 ## Suggested next features (original brainstorm — superseded by the roadmap above)
 
