@@ -47,6 +47,12 @@ html,body{height:100%;background:var(--bg);font-family:'Plus Jakarta Sans',sans-
 .sb-l-name{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .sb-l-pct{font-size:10px;margin-top:1px;}
 .sb-l-check{font-size:11px;color:var(--green);flex-shrink:0;font-weight:700;}
+.sb-exam{display:flex;align-items:center;gap:8px;margin:5px 12px 2px;padding:8px 10px;cursor:pointer;border-radius:var(--r-sm);background:var(--primary-light);transition:background .12s;}
+.sb-exam:hover{filter:brightness(.97);}
+.sb-exam.passed{background:var(--green-light);}
+.sb-exam .sb-l-name{color:var(--primary-dark);}
+.sb-exam.passed .sb-l-name{color:var(--green-dark);}
+.sb-exam .sb-l-pct{color:var(--muted);}
 .mobile-header{display:none;background:var(--white);border-bottom:1px solid var(--border);padding:12px 16px;align-items:center;justify-content:space-between;flex-shrink:0;}
 @media(max-width:768px){.sidebar{display:none;}.mobile-header{display:flex!important;}}
 .level-strip{background:var(--white);border-radius:var(--r);padding:14px 16px;margin-bottom:14px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;}
@@ -1746,7 +1752,7 @@ function buildSidebar(){
   h+=`<div class="sb-stats"><div class="sb-stat">🔥<b>${sStreak}</b><span>day streak</span></div><div class="sb-stat">${sDaysLeft>0?"⏳":"🎓"}<b>${sDaysLeft>0?sDaysLeft:"✓"}</b><span>${sDaysLeft>0?"days left":"target"}</span></div></div>`;
   h+=`<div class="sb-goal-wrap"><div class="sb-goal-top"><span>Daily goal</span><span>${sDXP}/${sGXP} XP</span></div><div class="sb-goal-track"><div class="sb-goal-fill" style="width:${sGoalPct}%"></div></div></div>`;
   h+=`<div class="sb-lessons">`;
-  PHASES.forEach(ph=>{
+  PHASES.forEach((ph,phi)=>{
     h+=`<div class="sb-phase">${ph.label}</div>`;
     ph.lessons.forEach(l=>{
       const done=ST.completed.includes(l.id),mast=lessonMastery(l.id),isAct=curL===l.id;
@@ -1758,6 +1764,10 @@ function buildSidebar(){
       else if(comp.pct>0)h+=`<div class="sb-l-pct" style="color:var(--primary)">${comp.done}/${comp.total} done · ${mast>0?mast+"% mastery":""}</div>`;
       h+=`</div>${done?'<span class="sb-l-check">✓</span>':""}</div>`;
     });
+    if(phaseExamReady(phi)){
+      const ex=ST.exam&&ST.exam["p"+phi],passed=ex&&ex.passed;
+      h+=`<div class="sb-exam${passed?" passed":""}" onclick="openExam(${phi})"><span class="sb-l-icon">${passed?"🏅":"📝"}</span><div class="sb-l-info"><div class="sb-l-name">Final Exam</div><div class="sb-l-pct">${ex?(passed?"Passed · best "+ex.best+"%":"Best "+ex.best+"% · pass 80%"):"50 questions · pass 80%"}</div></div><span class="sb-l-check" style="color:var(--primary)">→</span></div>`;
+    }
   });
   h+=`</div>`;
   sb.innerHTML=h;
