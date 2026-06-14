@@ -266,6 +266,12 @@ html,body{height:100%;background:var(--bg);font-family:'Plus Jakarta Sans',sans-
 .bank-text{font-size:14px;font-weight:600;color:var(--text);line-height:1.5;}
 .bank-del{position:absolute;top:6px;right:8px;cursor:pointer;color:var(--muted);font-size:15px;line-height:1;border:none;background:none;padding:2px;}
 .bank-del:hover{color:var(--red);}
+.te-err{background:var(--white);border:1px solid var(--border);border-left:4px solid var(--primary);border-radius:var(--r-sm);padding:10px 12px;margin-bottom:8px;box-shadow:var(--shadow);}
+.te-wrong{font-size:13.5px;font-weight:600;color:var(--red-dark);}
+.te-right{font-size:13.5px;font-weight:600;color:var(--green-dark);margin:3px 0 5px;}
+.te-note{font-size:12px;color:var(--muted);line-height:1.55;}
+.te-ex{font-size:13.5px;font-weight:600;line-height:1.65;padding:7px 0;border-bottom:1px solid var(--border);}
+.te-ex:last-child{border-bottom:none;}
 .match-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
 .match-col{display:flex;flex-direction:column;gap:6px;}
 .match-item{padding:11px 10px;border-radius:var(--r-sm);border:2px solid var(--border);background:var(--white);cursor:pointer;font-size:12px;font-weight:600;text-align:center;transition:all .15s;line-height:1.4;-webkit-user-select:none;}
@@ -1959,6 +1965,86 @@ const LEARN={
 };
 Object.keys(LEARN).forEach(function(k){if(LD[k])LD[k].learn=LEARN[k];});
 
+// ── Teacher Mode: per-lesson teaching toolkit (common errors, a plain-English script, board examples, a mini-activity) ──
+const TEACH={
+  pos:{errors:[{w:"She sing beautiful.",r:"She sings beautifully.",n:"Use an adverb (-ly) after a verb, not an adjective."},{w:"Me and him went to class.",r:"He and I went to class.",n:"Use subject pronouns for the subject."},{w:"I have three childrens.",r:"I have three children.",n:"'children' is an irregular plural — no extra -s."}],
+    script:"Don't define the eight terms first. Put one real sentence on the board and ask what job each word does — names a thing? a noun; shows an action? a verb. The same word can switch jobs: 'book a flight' (verb) vs 'read a book' (noun).",
+    ccq:{q:"In 'She runs fast,' which word is the verb, and which tells how she runs?",a:"'runs' is the verb; 'fast' (adverb) tells how."},
+    examples:["The (article) clever (adjective) student (noun) answered (verb) quickly (adverb).","Wow (interjection)! Mohammad and Sara (nouns) teach (verb) here (adverb)."],
+    activity:"Hand each student a sentence; they underline and label every word's part of speech, then swap papers and check."},
+  articles:{errors:[{w:"I am teacher.",r:"I am a teacher.",n:"Singular countable jobs need 'a/an'."},{w:"She has an university degree.",r:"She has a university degree.",n:"'university' starts with a /j/ consonant sound → 'a'."},{w:"The water is essential to the life.",r:"Water is essential to life.",n:"No article for general or uncountable nouns."}],
+    script:"Teach by sound, not spelling. Say the next word aloud: a vowel sound takes 'an' (an hour), a consonant sound takes 'a' (a university). For 'the', ask: do we both already know which one? If yes, use 'the'.",
+    ccq:{q:"'an MBA' or 'a MBA' — and why?",a:"'an MBA' — 'M' begins with the vowel sound /em/."},
+    examples:["a university · an hour · an honest man · a one-way street","Pass me the book (specific). I need a pen (any). Knowledge is power (general)."],
+    activity:"Give a short paragraph with all articles removed; students insert a/an/the/— and justify each choice aloud."},
+  tenses:{errors:[{w:"I am living here since 2019.",r:"I have lived here since 2019.",n:"'since' takes the present perfect, not the present continuous."},{w:"Yesterday I have gone to the market.",r:"Yesterday I went to the market.",n:"A finished time ('yesterday') needs the past simple."},{w:"I am knowing the answer.",r:"I know the answer.",n:"Stative verbs avoid the continuous form."}],
+    script:"Draw a timeline. Put 'yesterday' in the past, 'now' in the middle, and 'since 2019' as an arrow reaching to now. Let the signal words pick the tense — 'since/for' point to the perfect, 'yesterday' to the past simple.",
+    ccq:{q:"'She has lived in Kuwait since 2015.' Does she live there now?",a:"Yes — the present perfect links the past to now."},
+    examples:["She teaches (habit) · She is teaching (now) · She has taught (linked to now) · She had taught (before another past)."],
+    activity:"Give three time markers (yesterday, since Monday, by next year); students write one sentence each in the matching tense."},
+  agreement:{errors:[{w:"The box of books are heavy.",r:"The box of books is heavy.",n:"The verb agrees with 'box' (singular), not 'books'."},{w:"Everyone have a book.",r:"Everyone has a book.",n:"Indefinite pronouns like 'everyone' are singular."},{w:"My family are big.",r:"My family is big.",n:"Collective nouns take a singular verb (American English)."}],
+    script:"Teach students to cover the phrase between the subject and the verb. In 'the box of books ___ heavy,' hide 'of books' and 'box' is clearly the subject → 'is'. Removing the distractor makes agreement obvious almost every time.",
+    ccq:{q:"'The list of names ___ on the desk.' is or are?",a:"'is' — the subject is 'list', not 'names'."},
+    examples:["Each student submits one essay. · Everyone is ready. · The team wins. · Both are correct."],
+    activity:"Show sentences with a phrase between subject and verb; students cross out the phrase, then choose the verb."},
+  phrases:{errors:[{w:"Walking to class, the rain started.",r:"Walking to class, I felt the rain start.",n:"A participial phrase must modify the noun right after it."},{w:"She is interested in grammar and to teach.",r:"She is interested in grammar and in teaching.",n:"Keep the phrases parallel."},{w:"The book on the desk are mine.",r:"The book on the desk is mine.",n:"The head noun 'book' is singular; the phrase doesn't change agreement."}],
+    script:"Have students bracket each phrase and name it by its head word — a noun phrase is built around a noun, a prepositional phrase starts with a preposition. Seeing a sentence as a few labeled chunks makes structure click.",
+    ccq:{q:"In 'the book on the desk', what kind of phrase is 'on the desk', and what does it describe?",a:"A prepositional phrase describing 'book' (an adjective function)."},
+    examples:["the talented young teacher (noun phrase) · has been teaching (verb phrase) · in the morning (prepositional phrase)"],
+    activity:"Give a long sentence; students bracket and label every phrase, then rebuild the sentence from the chunks."},
+  clauses:{errors:[{w:"Because she studied hard.",r:"She passed because she studied hard.",n:"A dependent clause alone is a fragment."},{w:"The teacher which helped me.",r:"The teacher who helped me.",n:"Use 'who' for people, 'which' for things."},{w:"I will call you when you will arrive.",r:"I will call you when you arrive.",n:"After 'when', use the present for future meaning."}],
+    script:"Have students underline the subject and verb in each clause, then ask: can it stand alone? 'She passed' yes (independent); 'because she studied' no (dependent). Counting clauses is the doorway to sentence types.",
+    ccq:{q:"Is 'although it was late' independent or dependent?",a:"Dependent — it cannot stand alone."},
+    examples:["She teaches. (independent) · because she loves it (dependent) · who inspires us (relative) · what she said (noun clause)"],
+    activity:"Give clause cards; students sort them into 'stands alone' vs 'needs a main clause', then combine pairs into complex sentences."},
+  sentencetypes:{errors:[{w:"I studied hard, I passed.",r:"I studied hard, so I passed.",n:"Comma splice — add a coordinator or use a semicolon."},{w:"Although it was hard, but we finished.",r:"Although it was hard, we finished.",n:"Don't pair 'although' with 'but'."},{w:"When you arrive. Call me.",r:"When you arrive, call me.",n:"Join the dependent clause with a comma, not a period."}],
+    script:"Give one simple idea and have students write it four ways: simple, compound, complex, compound-complex. Counting independent and dependent clauses names each type — and varying them is what makes writing flow.",
+    ccq:{q:"'Because it rained, we stayed.' How many independent clauses, and which type?",a:"One independent + one dependent → complex."},
+    examples:["Simple: She teaches. · Compound: She teaches, and he writes. · Complex: Because it rained, we stayed. · Compound-complex: When it rang, she left and he stayed."],
+    activity:"Comma-splice clinic: show run-ons and splices; students fix each three ways — period, semicolon, comma + FANBOYS."},
+  punctuation:{errors:[{w:"Its a great day.",r:"It's a great day.",n:"'it's' = it is; 'its' = possessive."},{w:"The teachers lounge is upstairs.",r:"The teachers' lounge is upstairs.",n:"Plural possessive: apostrophe after the s."},{w:"I bought pens, pencils and, erasers.",r:"I bought pens, pencils, and erasers.",n:"The serial comma goes before 'and', not after."}],
+    script:"Use the swap test live: read 'it is' aloud in the sentence — if it fits, write 'it's'; if not, use 'its'. For commas, show 'Let's eat, Grandma' vs 'Let's eat Grandma' to prove punctuation carries meaning.",
+    ccq:{q:"'The dog wagged ___ tail.' its or it's?",a:"'its' — possessive, no apostrophe."},
+    examples:["She teaches; he writes. (semicolon) · Bring three things: a pen, paper, and focus. (colon) · Mohammad's class (possessive)"],
+    activity:"Give an unpunctuated paragraph; students add commas, apostrophes, and end marks, then compare versions and discuss meaning changes."},
+  mistakes:{errors:[{w:"Your welcome.",r:"You're welcome.",n:"'you're' = you are."},{w:"There going to there house.",r:"They're going to their house.",n:"they're = they are; their = possessive; there = a place."},{w:"Between you and I.",r:"Between you and me.",n:"Use the object pronoun after a preposition."}],
+    script:"Teach the swap test as a lifelong habit: expand the contraction ('it is', 'you are') and listen. For pronouns, drop the other person — 'She and (I/me) left' → 'I left'. Students who self-test catch their own errors.",
+    ccq:{q:"'___ going to love this.' Your or You're?",a:"'You're' — you are."},
+    examples:["it's / its · you're / your · they're / their / there · fewer (countable) / less (uncountable) · affect (verb) / effect (noun)"],
+    activity:"Error hunt: give a short text peppered with these confusions; students find and fix each, then state the rule."},
+  register:{errors:[{w:"The data shows a lot of stuff.",r:"The data show several findings.",n:"Replace vague, informal words in academic writing."},{w:"He did a mistake.",r:"He made a mistake.",n:"Collocation: 'make a mistake'."},{w:"Thanks a ton for the help.",r:"Thank you very much for the help.",n:"Match the formality to your audience."}],
+    script:"Give a casual sentence and have students 'translate it up' to formal register, then discuss what changed — slang to precise words, contractions expanded, vague nouns made specific. Seeing both versions side by side makes register concrete.",
+    ccq:{q:"Which fits an essay: 'kids' or 'children'?",a:"'children' — neutral and formal."},
+    examples:["buy → purchase · help → assist · but → however · a lot of → numerous · get → obtain"],
+    activity:"Register flip: students rewrite a text-message request as a formal email, then turn it back into a casual message."},
+  clarity:{errors:[{w:"Due to the fact that it rained, we left.",r:"Because it rained, we left.",n:"Cut wordy phrases."},{w:"The decision was made by the committee.",r:"The committee decided.",n:"Prefer active voice and strong verbs."},{w:"It is a free gift.",r:"It is a gift.",n:"'free gift' is redundant."}],
+    script:"Hand students a paragraph and challenge them to cut it by 25% without losing meaning. The constraint forces them to find their own filler — far more powerful than any list of banned phrases.",
+    ccq:{q:"Tighten 'made a decision' to one verb.",a:"'decided'."},
+    examples:["due to the fact that → because · in order to → to · a large number of → many · was written by her → she wrote"],
+    activity:"Red-pen race: in pairs, students compete to cut the most words from a wordy paragraph while keeping the meaning intact."},
+  cohesion:{errors:[{w:"It rained, therefore we played anyway.",r:"It rained; however, we played anyway.",n:"Match the transition to the logic — this is contrast, not result."},{w:"She likes reading, writing, and to swim.",r:"She likes reading, writing, and swimming.",n:"Keep list items parallel."},{w:"The teachers met the students. They were nervous.",r:"The teachers met the students, who were nervous.",n:"Make the pronoun reference clear."}],
+    script:"Give students a scrambled paragraph and have them reorder it using the transition words as clues. It shows that connectors like 'however' and 'therefore' are signposts a reader actually follows.",
+    ccq:{q:"'The data was limited; ___ the conclusion is tentative.' however or therefore?",a:"'therefore' — limited data results in a tentative conclusion."},
+    examples:["contrast: however, nevertheless · result: therefore, thus · addition: moreover, furthermore · example: for instance"],
+    activity:"Transition swap: give sentences with the wrong connector; students replace each with one that fits the logic and justify it."},
+  explaining:{errors:[{w:"(teacher) 'The morpheme -ed marks preterite aspect.'",r:"'Add -ed to show the action already happened.'",n:"Use plain language with beginners."},{w:"(teacher) explains all 12 tenses in one lesson.",r:"introduces one tense, secures it, then adds the next.",n:"Chunk and scaffold."},{w:"(teacher) asks 'Do you understand?'",r:"asks a concept-check question with a clear answer.",n:"CCQs reveal real understanding."}],
+    script:"This lesson IS the teaching method: example first, then the rule, then practice. Model it yourself — pick any structure, show three clear examples, elicit the pattern, then name it. Plan one CCQ before you teach.",
+    ccq:{q:"Best CCQ for 'She used to smoke'?",a:"'Does she smoke now?' (No) — checks the meaning of a stopped habit."},
+    examples:["Example-first: 'I walked. She played. We watched.' → ask what they share → name the past simple."],
+    activity:"Micro-teach: in pairs, one explains a structure example-first with a CCQ; the other plays a confused beginner and rates the clarity."},
+  erroranalysis:{errors:[{w:"Treating every slip as an 'error'.",r:"Separate errors (knowledge gaps) from mistakes (self-correctable slips).",n:"The response differs for each."},{w:"Correcting every small error at once.",r:"Fix meaning-blocking (global) errors first.",n:"Triage protects fluency and confidence."},{w:"Interrupting fluency practice to correct.",r:"Note errors and give focused feedback afterward.",n:"Timing matters."}],
+    script:"Keep a running log of your students' most common errors. Patterns — like dropped articles from Arabic L1, or 'goed' overgeneralizations — tell you exactly what to reteach, turning correction into curriculum.",
+    ccq:{q:"A learner writes 'He goed home.' What kind of error is it?",a:"Overgeneralization — the regular '-ed' rule applied to an irregular verb."},
+    examples:["error vs mistake · global (blocks meaning) vs local · L1 interference · correction codes: Sp, T, WW, P"],
+    activity:"Mark-up practice: give student writing; teachers underline errors and add a correction code, then learners self-correct from the codes."},
+  academic:{errors:[{w:"This proves it always works.",r:"This suggests it may work in many cases.",n:"Hedge instead of overstating."},{w:"The study don't support it.",r:"The study does not support it.",n:"Avoid contractions in academic writing."},{w:"I think the data is good.",r:"The data appear robust.",n:"Use an impersonal, evidence-based voice."}],
+    script:"Have students 'translate' a casual paragraph into academic English and back. Switching registers on demand is the real skill — and it shows them that academic style (hedging, no contractions, precise words) is a set of choices, not arbitrary rules.",
+    ccq:{q:"Which is more academic: 'Smoking is bad' or 'Smoking may contribute to several illnesses'?",a:"The second — it hedges and avoids an absolute."},
+    examples:["hedge: may, suggests, tends to · no contractions: do not, cannot · precise: determine, obtain, numerous · impersonal: 'It can be argued that...'"],
+    activity:"Register translation: students rewrite a chat message about a topic as an academic abstract, then list each change they made."},
+};
+Object.keys(TEACH).forEach(function(k){if(LD[k])LD[k].teach=TEACH[k];});
+
 let DS={};
 function dsk(l,a){return l+"_"+a;}
 function ds(l,a){const k=dsk(l,a);if(!DS[k]){const att=getRC(l,a);DS[k]={qi:0,ans:false,sel:null,tapped:[],fv:"",roAns:[],roShuf:null,mSel:null,mDone:{},mShuf:null,score:0,done:false,fi:0,ff:false,fb:null,att,qs:null};}return DS[k];}
@@ -1973,10 +2059,10 @@ let curL=null,curA="overview";
 function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");}
 function goHome(){flushStudy();showScreen("scr-home");buildHome();}
 function openLesson(lid){const d=LD[lid];if(!d){toast("Coming soon! 🚧");return;}curL=lid;curA="overview";document.getElementById("lh-t").textContent=d.title;document.getElementById("lh-s").textContent=d.sub;showScreen("scr-lesson");buildTabs(lid);showAct(lid,"overview");buildSidebar();}
-const TABS=[{id:"overview",label:"📖 Overview"},{id:"flashcards",label:"🃏 Flashcards"},{id:"mcq",label:"❓ Quiz"},{id:"fill",label:"✏️ Fill Blank"},{id:"match",label:"🔗 Match"},{id:"tap",label:"👆 Tap Word"},{id:"err",label:"🔍 Error Fix"},{id:"write",label:"✍️ Write"},{id:"comp",label:"🎯 Comprehension"}];
+const TABS=[{id:"overview",label:"📖 Overview"},{id:"flashcards",label:"🃏 Flashcards"},{id:"mcq",label:"❓ Quiz"},{id:"fill",label:"✏️ Fill Blank"},{id:"match",label:"🔗 Match"},{id:"tap",label:"👆 Tap Word"},{id:"err",label:"🔍 Error Fix"},{id:"write",label:"✍️ Write"},{id:"comp",label:"🎯 Comprehension"},{id:"teacher",label:"👩‍🏫 Teacher"}];
 function buildTabs(lid){const row=document.getElementById("tabs-row");row.innerHTML="";TABS.forEach(t=>{const isDone=t.id!=="overview"&&t.id!=="flashcards"&&ST.actDone[lid]&&ST.actDone[lid][t.id];const score=isDone?actScore(lid,t.id):null;const btn=document.createElement("div");btn.className="tab"+(curA===t.id?" active":"")+(isDone?" done-tab":"");btn.textContent=isDone?(score!==null?t.label+" "+score+"%":t.label+" ✓"):t.label;btn.onclick=()=>{curA=t.id;buildTabs(lid);showAct(lid,t.id);};row.appendChild(btn);});}
-function showAct(lid,act){const p=document.getElementById("panels");p.innerHTML="";document.getElementById("lesson-scroll").scrollTop=0;const d=LD[lid];if(act==="overview")p.innerHTML=renderOV(d,lid);else if(act==="flashcards")renderFC(lid,p);else if(act==="mcq")renderMCQ(lid,p);else if(act==="fill")renderFill(lid,p);else if(act==="match")renderMatch(lid,p);else if(act==="tap")renderTap(lid,p);else if(act==="err")renderErr(lid,p);else if(act==="write")renderWrite(lid,p);else if(act==="comp")renderComp(lid,p);}
-function rerender(lid,act){const p=document.getElementById("panels");if(!p)return;if(act==="flashcards")renderFC(lid,p);else if(act==="mcq")renderMCQ(lid,p);else if(act==="fill")renderFill(lid,p);else if(act==="match")renderMatch(lid,p);else if(act==="tap")renderTap(lid,p);else if(act==="err")renderErr(lid,p);else if(act==="write")renderWrite(lid,p);else if(act==="comp")renderComp(lid,p);}
+function showAct(lid,act){const p=document.getElementById("panels");p.innerHTML="";document.getElementById("lesson-scroll").scrollTop=0;const d=LD[lid];if(act==="overview")p.innerHTML=renderOV(d,lid);else if(act==="flashcards")renderFC(lid,p);else if(act==="mcq")renderMCQ(lid,p);else if(act==="fill")renderFill(lid,p);else if(act==="match")renderMatch(lid,p);else if(act==="tap")renderTap(lid,p);else if(act==="err")renderErr(lid,p);else if(act==="write")renderWrite(lid,p);else if(act==="comp")renderComp(lid,p);else if(act==="teacher")renderTeacher(lid,p);}
+function rerender(lid,act){const p=document.getElementById("panels");if(!p)return;if(act==="flashcards")renderFC(lid,p);else if(act==="mcq")renderMCQ(lid,p);else if(act==="fill")renderFill(lid,p);else if(act==="match")renderMatch(lid,p);else if(act==="tap")renderTap(lid,p);else if(act==="err")renderErr(lid,p);else if(act==="write")renderWrite(lid,p);else if(act==="comp")renderComp(lid,p);else if(act==="teacher")renderTeacher(lid,p);}
 function switchAct(lid,act){curA=act;buildTabs(lid);showAct(lid,act);}
 
 function renderOV(d,lid){
@@ -2066,6 +2152,19 @@ function renderWrite(lid,el){const prompts=writeBank(lid),d=ds(lid,"write");if(!
 function wType(lid,v){ds(lid,"write").wv=v;}
 function wReveal(lid){const d=ds(lid,"write");const ta=document.getElementById("wt");if(ta)d.wv=ta.value;if(!(d.wv||"").trim()){toast("Write a sentence first ✍️");return;}d.wRev=true;rerender(lid,"write");}
 function wRate(lid,nailed){const d=ds(lid,"write"),prompts=writeBank(lid),q=prompts[d.qi];saveExample(lid,q.task,(d.wv||"").trim(),nailed);if(nailed){d.score++;addXP(10);}else{addXP(5);}if(d.qi<prompts.length-1){d.qi++;d.wv="";d.wRev=false;rerender(lid,"write");}else{d.done=true;markActDone(lid,"write",d.score,prompts.length);rerender(lid,"write");}}
+
+// ── Teacher Mode: read-only per-lesson teaching toolkit ──
+function renderTeacher(lid,el){
+  const T=LD[lid]&&LD[lid].teach;
+  if(!T){el.innerHTML='<div class="card"><div class="intro-desc">Teaching notes are coming for this lesson.</div></div>';return;}
+  let h=`<div class="card"><div class="intro-tag">👩‍🏫 Teacher Mode</div><div class="intro-h">How to teach this lesson</div><div class="intro-desc">A quick toolkit for the classroom: the errors students actually make, a plain-English way to explain it, board-ready examples, and a mini-activity.</div></div>`;
+  if(T.errors&&T.errors.length){h+=`<div class="learn-h">🚩 Common student errors</div>`;T.errors.forEach(e=>{h+=`<div class="te-err"><div class="te-wrong">✗ ${e.w}</div><div class="te-right">✓ ${e.r}</div><div class="te-note">${hl(e.n)}</div></div>`;});}
+  if(T.script)h+=`<div class="learn-h">🗣️ Explain it simply</div><div class="callout tip"><div class="callout-t">Teaching script</div><div>${hl(T.script)}</div></div>`;
+  if(T.ccq)h+=`<div class="callout hook"><div class="callout-t">Model concept-check (CCQ)</div><div><strong>Q:</strong> ${hl(T.ccq.q)}<br><strong>A:</strong> ${hl(T.ccq.a)}</div></div>`;
+  if(T.examples&&T.examples.length)h+=`<div class="learn-h">📋 Board-ready examples</div><div class="card">`+T.examples.map(x=>`<div class="te-ex">${hl(x)}</div>`).join("")+`</div>`;
+  if(T.activity)h+=`<div class="learn-h">🎲 Try it in class</div><div class="callout" style="background:var(--green-light);border-color:var(--green)"><div class="callout-t" style="color:var(--green-dark)">Mini-activity</div><div>${hl(T.activity)}</div></div>`;
+  el.innerHTML=h;
+}
 
 function doneBanner(lid,act,score,total,nextAct){const pct=Math.round((score/total)*100);const em=pct===100?"🏆":pct>=70?"🎉":"💪";return `<div class="done-card"><div class="done-emoji">${em}</div><div class="done-title">${pct===100?"Perfect score!":pct>=70?"Great work!":"Keep practicing!"}</div><div class="done-score">${score}/${total} · ${pct}%</div><div class="done-sub">${pct===100?"You nailed every question.":pct>=70?"Strong effort — review any misses.":"Every attempt makes you stronger."}</div><div class="btn-row" style="justify-content:center"><button class="btn" onclick="retryAct('${lid}','${act}')">↺ New set</button>${nextAct?`<button class="btn primary" onclick="switchAct('${lid}','${nextAct}')">Next →</button>`:`<button class="btn success" onclick="goHome()">🏠 Home</button>`}</div></div>`;}
 function retryAct(lid,act){resetDS(lid,act);rerender(lid,act);}

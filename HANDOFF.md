@@ -19,7 +19,7 @@ Mohammad — Kuwaiti, English Masters from Penn State (Rochester, 2017–2019), 
 - **Publishable key:** `sb_publishable_vyCD7qOBTheSMhM6fgXeLw_me3ViUg6`
 - **Table:** `progress(user_id text PK, data jsonb, updated_at timestamptz)`
 - **Auth:** passphrase stored in `localStorage` key `em_passphrase`
-- **localStorage key:** `em_full_v1` → `{xp, completed[], actDone{}, retryCount{}, mastery{}, streak, bestStreak, lastStudyDay, dailyXP{date,xp}, goalXP, studySeconds{total,today,day}, qpool{"lid_act":{order,pos}}, exam{"p<i>":{best,passed}}, examples{"lid":[{task,text,rating,date}]}}`
+- **localStorage key:** `em_full_v1` → `{xp, completed[], actDone{}, retryCount{}, mastery{}, streak, bestStreak, lastStudyDay, dailyXP{date,xp}, goalXP, studySeconds{total,today,day}, qpool{"lid_act":{order,pos}}, exam{"p<i>":{best,passed}}, examples{"lid":[{task,text,rating,date}]}, mistakes[{type,label,prompt/b,opts,ans,ac,exp,key}]}`
 
 ---
 
@@ -38,8 +38,16 @@ Mohammad — Kuwaiti, English Masters from Penn State (Rochester, 2017–2019), 
 - ✅ Phase 4 (The Teacher's Edge): `explaining`, `erroranalysis`, `academic`
 - 🏅 **All four phase final exams are live** (`phaseExamReady(i)` true for every phase). Each lesson has a full `LD` entry, 3–4 `SLD` sub-lessons, a `LEARN` overview, a `WRITE` bank, and `EXAM_EXTRA` supplements.
 
-### Activities per lesson (9 tabs)
-Overview, Flashcards, MCQ Quiz (6 q), Fill in Blank (5 q), Match Pairs, Tap Word, **Error Fix** (6 q), **Write** (self-check writing, 3–4 prompts), **Comprehension** (cumulative MCQ + Error-Fix pooled from all lessons up to this one, 12 q, fresh each retry — `renderComp`/`getCompQs`/`buildCompPool`/`priorLessonIds`)
+### Activities per lesson (10 tabs)
+Overview, Flashcards, MCQ Quiz (6 q), Fill in Blank (5 q), Match Pairs, Tap Word, **Error Fix** (6 q), **Write** (self-check writing, 3–4 prompts), **Comprehension** (cumulative MCQ + Error-Fix pooled from all lessons up to this one, 12 q, fresh each retry — `renderComp`/`getCompQs`/`buildCompPool`/`priorLessonIds`), **Teacher** (read-only teaching toolkit, see below)
+
+### Retention features (Review My Misses + Weak Spots)
+- **Mistake log:** every wrong answer (mcq/fill/err/comp/sub-lesson/exam) is captured via `logMiss()` from each `*Chk` handler + `examSubmit`, deduped by `missKey`, stored in `ST.mistakes`. Surfaced as a home card (`reviewCardHTML`) and sidebar row.
+- **Review My Misses:** `openReview()` re-serves the log one item at a time on the `scr-review` screen; a correct answer calls `clearMiss(key)` and removes it. Items are normalized to `{type:"choice"|"fill", ...}`.
+- **Weak Spots Drill:** `buildWeakSpots()` ranks attempted `(lid,act)` by `ST.mastery` ascending, pulls a 12-question drill from the 4 weakest lessons' mcq/err/fill banks; `openWeak()` runs it through the same `renderReview` engine (`RV.kind==="weak"` — does **not** clear misses). Orange home card (`weakCardHTML`) + sidebar row.
+
+### Teacher Mode tab (per lesson)
+- `TEACH[lid]` = `{errors:[{w,r,n}], script, ccq:{q,a}, examples[], activity}` for all 15 lessons; attached via `LD[k].teach=TEACH[k]`. `renderTeacher(lid)` shows common student errors (✗/✓/note), a plain-English teaching script, a model CCQ, board-ready examples, and a mini-activity. Read-only (no grading/XP). To extend, add to the `TEACH` object.
 
 ### Write (create-your-own-sentences) — self-check writing activity
 - `WRITE[lid]` = array of prompts `{task, model, checklist[]}`; attached via `LD[k].writeBank=WRITE[k]` in a loop (like `EXAM_EXTRA`). Authored for all 5 active lessons (3–4 prompts each).
@@ -152,7 +160,10 @@ Dark mode via `[data-theme="dark"]` on `<html>`. Theme stored in `localStorage('
 
 ## Git state
 Branch: `main`. All changes committed and pushed. Recent commits (newest first):
-- _(latest)_ Phase 4 lessons 13–15 (Teacher's Edge) — all 15 lessons now authored
+- _(latest)_ Teacher Mode tab (per-lesson teaching toolkit, all 15 lessons)
+- `00fd24a` Weak Spots Drill (targeted practice from lowest-mastery lessons)
+- `8a1b036` mistake log + "Review My Misses" session
+- `f7a8bc7` Phase 4 lessons 13–15 (Teacher's Edge) — all 15 lessons now authored
 - `203e796` Phase 3 lessons 9–12 (Precision & Style)
 - `b0d75b8` phase final exam added to the left sidebar
 - `37ce53f` Phase 2 lessons 6–8 (Clauses, Sentence Types, Punctuation)
@@ -180,13 +191,13 @@ See `nimbalyst-local/plans/english-mastery-roadmap.md` for the full 7-milestone 
 
 ---
 
-## Next up (start here) — review/retention features
-✅ **The entire 15-lesson curriculum is complete** (all 4 phases authored, all 4 final exams live). Content authoring is done. The remaining queue is features, not content:
+## Next up (start here) — polish & extras
+✅ **Curriculum complete** (15 lessons, 4 exams) AND ✅ **Retention pack** (mistake log + Review My Misses + Weak Spots Drill) AND ✅ **Teacher Mode** all shipped. Remaining ideas (all optional polish):
 
-1. **Mistake log** — auto-save wrong answers, "review my misses" session. Hook into the `*Chk` handlers (mChk/fChk/eChk/tChk/cChk) and exam grading to push misses into `ST.mistakes`; add a review screen/section that re-serves them.
-2. **Weak-spots auto-review** — drill lowest-mastery activities (use `actScore`/`lessonMastery`).
-3. **Teacher Mode** — per-lesson tab: common student errors + plain-English explanation scripts + classroom examples. Note Phase 4 (`explaining`, `erroranalysis`, `academic`) already teaches much of this — Teacher Mode could surface it per-lesson.
-4. **Polish** — keyboard shortcuts, stats/progress page, spaced-repetition flashcards, PDF export.
+1. **Progress/stats dashboard** — XP over time, strongest/weakest lessons, exam history, mastery heatmap, Aug-6 trajectory. (Mohammad was offered this; he chose retention + teacher mode first — it's the natural next pick.)
+2. **Spaced-repetition flashcards** — schedule cards by recall difficulty (the mistake log + weak-spots already cover targeted re-review, so this is lower priority now).
+3. **Export** — print a lesson's Teacher Mode notes or the Write sentence bank as a PDF/handout for class.
+4. **Keyboard shortcuts** (A–D for MCQ, Enter to check), and an AI grammar-check for the Write tab (serverless function — biggest lift).
 
 **Authoring pattern for a lesson** (if ever revisited): add an `LD.<id>` entry (intro, rule, defs[8], fc[8], mcqBank~14, fillBank~12, matchBank 5, tapBank~10, errBank 6); an `SLD.<id>` array of 3–4 sub-lessons (`{id,icon,title,desc,intro,rule,points[5],mcqBank[4],fillBank[4]}`); `LD.<id>.sublessons=SLD.<id>`; a `LEARN.<id>` entry; a `WRITE.<id>` entry; an `EXAM_EXTRA.<id>` (`{mcq,err}`); flip `unlocked:true` in `PHASES`. **Watch sub-lesson ID prefixes for collisions** (clarity uses `clr_`, not `cla_` which is clauses). Syntax-check by extracting the inline `<script>` (from `const SB=` to `</script>`) and running `new Function(code)` via `osascript -l JavaScript` (see Environment).
 4. **Teacher Mode** — per-lesson tab: common student errors + plain-English explanation scripts + classroom examples (expands on the per-lesson Teaching tip).
