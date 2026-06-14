@@ -31,17 +31,12 @@ Mohammad — Kuwaiti, English Masters from Penn State (Rochester, 2017–2019), 
 - Built with: Plus Jakarta Sans, blue primary `#4F6EF7`, dark mode toggle, 14px border radius
 
 ### Structure
-4 Phases, 15 lessons. **8 lessons have full content (Phases 1 & 2 complete):**
-- ✅ Lesson 1 — Parts of Speech (`pos`) — unlocked
-- ✅ Lesson 2 — Articles & Determiners (`articles`) — unlocked
-- ✅ Lesson 3 — Verb Tenses & Aspect (`tenses`) — unlocked
-- ✅ Lesson 4 — Subject-Verb Agreement (`agreement`) — unlocked
-- ✅ Lesson 5 — Phrases (`phrases`) — unlocked (Phase 2)
-- ✅ Lesson 6 — Clauses (`clauses`) — unlocked (Phase 2)
-- ✅ Lesson 7 — Sentence Types (`sentencetypes`) — unlocked (Phase 2)
-- ✅ Lesson 8 — Punctuation (`punctuation`) — unlocked (Phase 2)
-- 🔒 Lessons 9–15 — no content yet (Phases 3 & 4)
-- 🏅 **Phase 2 final exam is now live** (all four Phase 2 lessons authored → `phaseExamReady(1)` true; pool ~275 q)
+4 Phases, 15 lessons. **ALL 15 lessons are fully authored — the curriculum is complete.**
+- ✅ Phase 1: `pos`, `articles`, `tenses`, `agreement`
+- ✅ Phase 2: `phrases`, `clauses`, `sentencetypes`, `punctuation`
+- ✅ Phase 3 (Precision & Style): `mistakes`, `register`, `clarity`, `cohesion`
+- ✅ Phase 4 (The Teacher's Edge): `explaining`, `erroranalysis`, `academic`
+- 🏅 **All four phase final exams are live** (`phaseExamReady(i)` true for every phase). Each lesson has a full `LD` entry, 3–4 `SLD` sub-lessons, a `LEARN` overview, a `WRITE` bank, and `EXAM_EXTRA` supplements.
 
 ### Activities per lesson (9 tabs)
 Overview, Flashcards, MCQ Quiz (6 q), Fill in Blank (5 q), Match Pairs, Tap Word, **Error Fix** (6 q), **Write** (self-check writing, 3–4 prompts), **Comprehension** (cumulative MCQ + Error-Fix pooled from all lessons up to this one, 12 q, fresh each retry — `renderComp`/`getCompQs`/`buildCompPool`/`priorLessonIds`)
@@ -72,8 +67,15 @@ The Overview is now a teach-first **Learn page** (see architecture notes); sub-l
 | Clauses | Independent · Dependent · Relative · Noun Clauses |
 | Sentence Types | Simple · Compound · Complex & Compound-Complex · Sentence Purposes |
 | Punctuation | The Comma · Semicolons & Colons · Apostrophes · Quotation Marks/Dashes/Hyphens |
+| Common Mistakes | Confusing Pairs · Pronoun Case · Fewer/Less & Mix-ups · Double Negatives |
+| Word Choice & Register | Formal vs Informal · Connotation · Collocations · Precise Word Choice |
+| Conciseness & Clarity | Cutting Wordiness · Redundancy · Active Voice · Cutting Filler |
+| Coherence & Cohesion | Transitions · Reference & Substitution · Topic Sentences · Parallelism |
+| Explaining Grammar Simply | Plain Language · Example-First · CCQs · Scaffolding |
+| Error Analysis | Errors vs Mistakes · Causes (L1) · Global vs Local · Feedback & Codes |
+| Academic vs Everyday | Features · Hedging · Impersonal Voice · Academic Vocabulary |
 
-Sub-lesson IDs: `pos_nouns`, `pos_verbs`, `pos_adj_adv`, `pos_prep_conj`, `art_the`, `art_a_an`, `art_zero`, `ten_present`, `ten_past`, `ten_future`, `ten_stative`, `agr_basic`, `agr_pronouns`, `agr_collective`, `phr_noun`, `phr_verb`, `phr_prep`, `phr_modifier`, `cla_independent`, `cla_dependent`, `cla_relative`, `cla_noun`, `sen_simple`, `sen_compound`, `sen_complex`, `sen_functions`, `pun_comma`, `pun_semicolon`, `pun_apostrophe`, `pun_quotes`
+Sub-lesson ID prefixes (4 each): `pos_*`, `art_*`, `ten_*`, `agr_*`, `phr_*`, `cla_*` (clauses), `sen_*`, `pun_*`, `mis_*`, `reg_*`, `clr_*` (clarity — note: NOT `cla_`), `coh_*`, `expl_*`, `ea_*`, `acad_*`
 
 ### Level system
 ```js
@@ -150,7 +152,10 @@ Dark mode via `[data-theme="dark"]` on `<html>`. Theme stored in `localStorage('
 
 ## Git state
 Branch: `main`. All changes committed and pushed. Recent commits (newest first):
-- _(latest)_ Phase 2 lessons 6–8 (Clauses, Sentence Types, Punctuation) — completes Phase 2
+- _(latest)_ Phase 4 lessons 13–15 (Teacher's Edge) — all 15 lessons now authored
+- `203e796` Phase 3 lessons 9–12 (Precision & Style)
+- `b0d75b8` phase final exam added to the left sidebar
+- `37ce53f` Phase 2 lessons 6–8 (Clauses, Sentence Types, Punctuation)
 - `7e56c55` create-your-own-sentences Write activity + example bank
 - `c6a2f91` teach-first Learn overview on every lesson
 - `9c6db21` 50-question phase exams with 3 fresh attempts
@@ -168,21 +173,22 @@ Branch: `main`. All changes committed and pushed. Recent commits (newest first):
 See `nimbalyst-local/plans/english-mastery-roadmap.md` for the full 7-milestone plan and locked decisions (target date **2026-08-06**; lessons **co-authored** — Claude drafts, Mohammad supplies select examples; Teacher Mode = **per-lesson tab**).
 
 - ✅ **M1 — Consistency layer** (daily streak, daily-goal ring, Aug-6 countdown, study timer) — shipped 2026-06-06
-- ✅ **M2 — Phase 2 content (Lessons 5–8)** — DONE. All four lessons (Phrases, Clauses, Sentence Types, Punctuation) authored; Phase 2 final exam live.
-- M3 Phase 3 (9–12) · M4 Phase 4 (13–15) · M5 Teacher Mode · M6 Review/retention · M7 Polish
-- 🆕 **User review (2026-06-10):** ✅ retry-repeat fix · ✅ cumulative Comprehension quiz · ✅ phase final exams · ✅ bigger highlighted question text · ✅ teach-first Learn overview · ✅ create-your-own-sentences Write activity · ✅ **Phase 2 lessons 6–8**. Queued: mistake log, weak-spots review, Teacher Mode, then Phase 3 content.
+- ✅ **M2 — Phase 2 content (Lessons 5–8)** — DONE (final exam live).
+- ✅ **M3 — Phase 3 content (Lessons 9–12, Precision & Style)** — DONE (final exam live).
+- ✅ **M4 — Phase 4 content (Lessons 13–15, The Teacher's Edge)** — DONE (final exam live). **All 15 lessons + all 4 phase exams shipped.**
+- Remaining: M5 Teacher Mode · M6 Review/retention (mistake log, weak-spots) · M7 Polish.
 
 ---
 
-## Next up (start here) — Mistake log (#1)
-✅ **Phase 2 is complete** (Lessons 5–8 authored, final exam live). The queue is now:
+## Next up (start here) — review/retention features
+✅ **The entire 15-lesson curriculum is complete** (all 4 phases authored, all 4 final exams live). Content authoring is done. The remaining queue is features, not content:
 
 1. **Mistake log** — auto-save wrong answers, "review my misses" session. Hook into the `*Chk` handlers (mChk/fChk/eChk/tChk/cChk) and exam grading to push misses into `ST.mistakes`; add a review screen/section that re-serves them.
 2. **Weak-spots auto-review** — drill lowest-mastery activities (use `actScore`/`lessonMastery`).
-3. **Teacher Mode** — per-lesson tab: common student errors + plain-English explanation scripts + classroom examples (expands the per-lesson Teaching tip).
-4. **Phase 3 content** (Lessons 9–12: Common Mistakes, Word Choice & Register, Conciseness & Clarity, Coherence & Cohesion) — same authoring pattern (`LD`+`SLD`+`LEARN`+`WRITE`+`EXAM_EXTRA`+unlock).
+3. **Teacher Mode** — per-lesson tab: common student errors + plain-English explanation scripts + classroom examples. Note Phase 4 (`explaining`, `erroranalysis`, `academic`) already teaches much of this — Teacher Mode could surface it per-lesson.
+4. **Polish** — keyboard shortcuts, stats/progress page, spaced-repetition flashcards, PDF export.
 
-**Authoring pattern for a new lesson** (used for 6–8): add an `LD.<id>` entry (intro, rule, defs[8], fc[8], mcqBank~14, fillBank~12, matchBank 5, tapBank~10, errBank 6); an `SLD.<id>` array of 3–4 sub-lessons (`{id,icon,title,desc,intro,rule,points[5],mcqBank[4],fillBank[4]}`); `LD.<id>.sublessons=SLD.<id>`; a `LEARN.<id>` entry; a `WRITE.<id>` entry (3–4 prompts); an `EXAM_EXTRA.<id>` (`{mcq,err}`); and flip `unlocked:true` in `PHASES`. Syntax-check by extracting the inline `<script>` and running `new Function(code)` via `osascript -l JavaScript` (see Environment).
+**Authoring pattern for a lesson** (if ever revisited): add an `LD.<id>` entry (intro, rule, defs[8], fc[8], mcqBank~14, fillBank~12, matchBank 5, tapBank~10, errBank 6); an `SLD.<id>` array of 3–4 sub-lessons (`{id,icon,title,desc,intro,rule,points[5],mcqBank[4],fillBank[4]}`); `LD.<id>.sublessons=SLD.<id>`; a `LEARN.<id>` entry; a `WRITE.<id>` entry; an `EXAM_EXTRA.<id>` (`{mcq,err}`); flip `unlocked:true` in `PHASES`. **Watch sub-lesson ID prefixes for collisions** (clarity uses `clr_`, not `cla_` which is clauses). Syntax-check by extracting the inline `<script>` (from `const SB=` to `</script>`) and running `new Function(code)` via `osascript -l JavaScript` (see Environment).
 4. **Teacher Mode** — per-lesson tab: common student errors + plain-English explanation scripts + classroom examples (expands on the per-lesson Teaching tip).
 
 ## Working style with Mohammad (important)
