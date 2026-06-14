@@ -31,13 +31,17 @@ Mohammad — Kuwaiti, English Masters from Penn State (Rochester, 2017–2019), 
 - Built with: Plus Jakarta Sans, blue primary `#4F6EF7`, dark mode toggle, 14px border radius
 
 ### Structure
-4 Phases, 15 lessons. **5 lessons have full content:**
+4 Phases, 15 lessons. **8 lessons have full content (Phases 1 & 2 complete):**
 - ✅ Lesson 1 — Parts of Speech (`pos`) — unlocked
 - ✅ Lesson 2 — Articles & Determiners (`articles`) — unlocked
 - ✅ Lesson 3 — Verb Tenses & Aspect (`tenses`) — unlocked
 - ✅ Lesson 4 — Subject-Verb Agreement (`agreement`) — unlocked
 - ✅ Lesson 5 — Phrases (`phrases`) — unlocked (Phase 2)
-- 🔒 Lessons 6–15 — no content yet
+- ✅ Lesson 6 — Clauses (`clauses`) — unlocked (Phase 2)
+- ✅ Lesson 7 — Sentence Types (`sentencetypes`) — unlocked (Phase 2)
+- ✅ Lesson 8 — Punctuation (`punctuation`) — unlocked (Phase 2)
+- 🔒 Lessons 9–15 — no content yet (Phases 3 & 4)
+- 🏅 **Phase 2 final exam is now live** (all four Phase 2 lessons authored → `phaseExamReady(1)` true; pool ~275 q)
 
 ### Activities per lesson (9 tabs)
 Overview, Flashcards, MCQ Quiz (6 q), Fill in Blank (5 q), Match Pairs, Tap Word, **Error Fix** (6 q), **Write** (self-check writing, 3–4 prompts), **Comprehension** (cumulative MCQ + Error-Fix pooled from all lessons up to this one, 12 q, fresh each retry — `renderComp`/`getCompQs`/`buildCompPool`/`priorLessonIds`)
@@ -52,7 +56,7 @@ Overview, Flashcards, MCQ Quiz (6 q), Fill in Blank (5 q), Match Pairs, Tap Word
 A lesson is "complete" when all 5 graded activities (mcq, fill, match, tap, **err**) are done → +50 XP (Write & Comprehension are not gated)
 
 ### Sub-lessons (drill-down from Overview tab)
-The Overview is now a teach-first **Learn page** (see architecture notes); sub-lessons render below it as "deep dives". Each of the 5 active lessons has 3–4 sub-lessons with:
+The Overview is now a teach-first **Learn page** (see architecture notes); sub-lessons render below it as "deep dives". Each of the 8 active lessons has 3–4 sub-lessons with:
 - Detailed explanation (key concept cards + rule box)
 - 4-question MCQ quiz (+8 XP)
 - 4-question fill-in-blank (+8 XP)
@@ -65,8 +69,11 @@ The Overview is now a teach-first **Learn page** (see architecture notes); sub-l
 | Verb Tenses | Present Tenses · Past Tenses · Future Forms · Stative Verbs & Used To |
 | Agreement | Basic Rules · Indefinite Pronouns · Collective Nouns |
 | Phrases | Noun Phrases · Verb Phrases · Prepositional Phrases · Adjective & Adverb Phrases |
+| Clauses | Independent · Dependent · Relative · Noun Clauses |
+| Sentence Types | Simple · Compound · Complex & Compound-Complex · Sentence Purposes |
+| Punctuation | The Comma · Semicolons & Colons · Apostrophes · Quotation Marks/Dashes/Hyphens |
 
-Sub-lesson IDs: `pos_nouns`, `pos_verbs`, `pos_adj_adv`, `pos_prep_conj`, `art_the`, `art_a_an`, `art_zero`, `ten_present`, `ten_past`, `ten_future`, `ten_stative`, `agr_basic`, `agr_pronouns`, `agr_collective`, `phr_noun`, `phr_verb`, `phr_prep`, `phr_modifier`
+Sub-lesson IDs: `pos_nouns`, `pos_verbs`, `pos_adj_adv`, `pos_prep_conj`, `art_the`, `art_a_an`, `art_zero`, `ten_present`, `ten_past`, `ten_future`, `ten_stative`, `agr_basic`, `agr_pronouns`, `agr_collective`, `phr_noun`, `phr_verb`, `phr_prep`, `phr_modifier`, `cla_independent`, `cla_dependent`, `cla_relative`, `cla_noun`, `sen_simple`, `sen_compound`, `sen_complex`, `sen_functions`, `pun_comma`, `pun_semicolon`, `pun_apostrophe`, `pun_quotes`
 
 ### Level system
 ```js
@@ -100,7 +107,10 @@ const LEVELS=[
 - tenses: 30 MCQ, 16 fill, 6 match sets, 10 tap, 10 err
 - agreement: 24 MCQ, 10 fill, 4 match sets, 8 tap, 10 err
 - phrases: 14 MCQ, 12 fill, 5 match sets, 10 tap, 6 err
-- `EXAM_EXTRA` (after the sublesson attachments) holds supplemental MCQ/Error-Fix for Lessons 1–4, merged into their banks at load — this deepened the Phase 1 pool to ~159 so the 50-question exam gives 3 fully fresh attempts. Add to it (or any bank) to keep exams/comprehension fresh.
+- clauses: 14 MCQ + 8 EXAM_EXTRA, 12 fill, 5 match sets, 10 tap, 6 err + 4 EXAM_EXTRA
+- sentencetypes: 14 MCQ + 8 EXAM_EXTRA, 12 fill, 5 match sets, 10 tap, 6 err + 4 EXAM_EXTRA
+- punctuation: 14 MCQ + 8 EXAM_EXTRA, 12 fill, 5 match sets, 10 tap, 6 err + 4 EXAM_EXTRA
+- `EXAM_EXTRA` (after the sublesson attachments) holds supplemental MCQ/Error-Fix, merged into their banks at load. Covers Lessons 1–4 (deepened Phase 1 pool to ~159) **and now 6–8** (Phase 2 cumulative pool ~275) so each 50-question exam gives 3 fully fresh attempts. Add to it (or any bank) to keep exams/comprehension fresh. (Phrases has no EXAM_EXTRA yet — a good place to deepen further.)
 
 ### Key JS architecture notes
 - `LD` object holds all lesson data. Sub-lessons registered into `LD` dynamically via `LD[slid]` when first opened
@@ -140,7 +150,8 @@ Dark mode via `[data-theme="dark"]` on `<html>`. Theme stored in `localStorage('
 
 ## Git state
 Branch: `main`. All changes committed and pushed. Recent commits (newest first):
-- _(latest)_ create-your-own-sentences Write activity + example bank
+- _(latest)_ Phase 2 lessons 6–8 (Clauses, Sentence Types, Punctuation) — completes Phase 2
+- `7e56c55` create-your-own-sentences Write activity + example bank
 - `c6a2f91` teach-first Learn overview on every lesson
 - `9c6db21` 50-question phase exams with 3 fresh attempts
 - `d3c84ae` graded phase final exams
@@ -157,18 +168,21 @@ Branch: `main`. All changes committed and pushed. Recent commits (newest first):
 See `nimbalyst-local/plans/english-mastery-roadmap.md` for the full 7-milestone plan and locked decisions (target date **2026-08-06**; lessons **co-authored** — Claude drafts, Mohammad supplies select examples; Teacher Mode = **per-lesson tab**).
 
 - ✅ **M1 — Consistency layer** (daily streak, daily-goal ring, Aug-6 countdown, study timer) — shipped 2026-06-06
-- 🔧 **M2 — Phase 2 content (Lessons 5–8)** — ✅ Lesson 5 (Phrases) shipped; Lessons 6–8 (clauses, sentencetypes, punctuation) pending review
+- ✅ **M2 — Phase 2 content (Lessons 5–8)** — DONE. All four lessons (Phrases, Clauses, Sentence Types, Punctuation) authored; Phase 2 final exam live.
 - M3 Phase 3 (9–12) · M4 Phase 4 (13–15) · M5 Teacher Mode · M6 Review/retention · M7 Polish
-- 🆕 **User review (2026-06-10):** ✅ retry-repeat fix · ✅ cumulative Comprehension quiz · ✅ phase final exams (graded, pass 80%, 🏅 badge; gate on all phase lessons authored) · ✅ bigger highlighted question text · ✅ teach-first Learn overview on every lesson · ✅ **create-your-own-sentences Write activity** (self-check + personal example bank). Queued in order: Lessons 6–8, mistake log, weak-spots review, Teacher Mode.
+- 🆕 **User review (2026-06-10):** ✅ retry-repeat fix · ✅ cumulative Comprehension quiz · ✅ phase final exams · ✅ bigger highlighted question text · ✅ teach-first Learn overview · ✅ create-your-own-sentences Write activity · ✅ **Phase 2 lessons 6–8**. Queued: mistake log, weak-spots review, Teacher Mode, then Phase 3 content.
 
 ---
 
-## Next up (start here) — Lessons 6–8 content (#1)
-✅ **Create-your-own-sentences Write activity shipped** (see "Write" section above). The queue is now:
+## Next up (start here) — Mistake log (#1)
+✅ **Phase 2 is complete** (Lessons 5–8 authored, final exam live). The queue is now:
 
-1. **Lessons 6–8 content** (Clauses, Sentence Types, Punctuation) — unlocks the Phase 2 final exam. Follow the Lesson-5 pattern: `LD` entry + `SLD` sub-lessons + `LEARN` entry + unlock in `PHASES` + `LD.x.sublessons=SLD.x`. Keep `err` banks generous and add to `EXAM_EXTRA` so pools stay deep. **Also add a `WRITE` entry** (3–4 prompts) for each so the Write tab is populated.
-2. **Mistake log** — auto-save wrong answers, "review my misses" session.
-3. **Weak-spots auto-review** — drill lowest-mastery activities.
+1. **Mistake log** — auto-save wrong answers, "review my misses" session. Hook into the `*Chk` handlers (mChk/fChk/eChk/tChk/cChk) and exam grading to push misses into `ST.mistakes`; add a review screen/section that re-serves them.
+2. **Weak-spots auto-review** — drill lowest-mastery activities (use `actScore`/`lessonMastery`).
+3. **Teacher Mode** — per-lesson tab: common student errors + plain-English explanation scripts + classroom examples (expands the per-lesson Teaching tip).
+4. **Phase 3 content** (Lessons 9–12: Common Mistakes, Word Choice & Register, Conciseness & Clarity, Coherence & Cohesion) — same authoring pattern (`LD`+`SLD`+`LEARN`+`WRITE`+`EXAM_EXTRA`+unlock).
+
+**Authoring pattern for a new lesson** (used for 6–8): add an `LD.<id>` entry (intro, rule, defs[8], fc[8], mcqBank~14, fillBank~12, matchBank 5, tapBank~10, errBank 6); an `SLD.<id>` array of 3–4 sub-lessons (`{id,icon,title,desc,intro,rule,points[5],mcqBank[4],fillBank[4]}`); `LD.<id>.sublessons=SLD.<id>`; a `LEARN.<id>` entry; a `WRITE.<id>` entry (3–4 prompts); an `EXAM_EXTRA.<id>` (`{mcq,err}`); and flip `unlocked:true` in `PHASES`. Syntax-check by extracting the inline `<script>` and running `new Function(code)` via `osascript -l JavaScript` (see Environment).
 4. **Teacher Mode** — per-lesson tab: common student errors + plain-English explanation scripts + classroom examples (expands on the per-lesson Teaching tip).
 
 ## Working style with Mohammad (important)
